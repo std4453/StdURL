@@ -16,8 +16,8 @@ public class QueryState implements IParserState {
 
 		if (c == 0 || (!ParserStates.hasState(context.stateOverride) && c == '#')) { // 1
 			if (!SchemeHelper.isSpecialScheme(context.scheme) ||
-					"ws".equalsIgnoreCase(context.scheme) ||
-					"wss".equalsIgnoreCase(context.scheme))
+					SchemeHelper.SCHEME_WS.equalsIgnoreCase(context.scheme) ||
+					SchemeHelper.SCHEME_WSS.equalsIgnoreCase(context.scheme))
 				context.setEncoding(EncodingHelper.UTF8); // 1.1
 
 			byte[] encoded = context.buffer.toString().getBytes(context.encoding); // 1.2

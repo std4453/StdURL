@@ -9,21 +9,31 @@ import org.stdurl.parser.BasicURLParser;
 public class Example {
 	public static void main(String[] args) {
 		boolean passed =
-				test("https:example.org", null, "https://example.org/") |
+				test("https:example.org", null, "https://example.org/") &
 						test("https://////example.com///", null,
-								"https://example.com///") |
+								"https://example.com///") &
 						test("https://example.com/././foo", null,
-								"https://example.com/foo") |
-						test("hello:world", "https://example.com", "hello:world") |
+								"https://example.com/foo") &
+						test("hello:world", "https://example.com", "hello:world") &
 						test("https:example.org", "https://example.com",
-								"https://example.com/example.org") |
+								"https://example.com/example.org") &
 						test("\\example\\..\\demo/.\\", "https://example.com",
-								"https://example.com/demo/") |
+								"https://example.com/demo/") &
 						test("example", "https://example.com/demo",
-								"https://example.com/example") |
-						test("example", null, null) |
-						test("https://example.com:demo", null, null) |
-						test("http://[www.example.com]/", null, null);
+								"https://example.com/example") &
+						test("example", null, null) &
+						test("https://example.com:demo", null, null) &
+						test("http://[www.example.com]/", null, null) &
+						test("http://www.example.com/新年快乐", null,
+								"http://www.example" +
+										".com/%E6%96%B0%E5%B9%B4%E5%BF%AB%E4%B9%90") &
+						test("http://www.example.com/新年 快乐", null,
+								"http://www.example" +
+										".com/%E6%96%B0%E5%B9%B4%20%E5%BF%AB%E4%B9%90") &
+						test("http://www.example.com/%%%%", null,
+								"http://www.example.com/%%%%") &
+						test("http://www.example.com/%29%%29%", null,
+								"http://www.example.com/%29%%29%");
 
 		if (passed)
 			System.out.println("All passed.");

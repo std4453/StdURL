@@ -259,7 +259,8 @@ public class HostParser {
 
 					if (value > 255)
 						listener.onSyntaxViolation(String.format(hostParserSVMT,
-								input, pointer, "Value " + value + " too big."));
+								input, pointer, new StringBuilder("Value ")
+										.append(value).append(" too big.")));
 				}
 
 				// 10.5

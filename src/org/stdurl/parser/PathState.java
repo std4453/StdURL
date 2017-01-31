@@ -30,7 +30,7 @@ public class PathState implements IParserState {
 					c != '/' && !flag1) { // 1.3
 				context.path.add("");
 			} else if (!PathHelper.isSingleDotPathSegment(buf)) { // 1.4
-				if (FileSchemeHelper.isFileScheme(context.scheme) &&
+				if (SchemeHelper.SCHEME_FILE.equalsIgnoreCase(context.scheme) &&
 						context.path.isEmpty() &&
 						FileSchemeHelper.isWindowsDriveLetter(buf)) { // 1.4.1
 					if (context.host != null) context.reportSyntaxViolation(

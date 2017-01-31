@@ -9,21 +9,33 @@ import java.util.Map;
  *
  */
 public class SchemeHelper {
+	public static final String SCHEME_ABOUT = "about";
+	public static final String SCHEME_BLOB = "blob";
+	public static final String SCHEME_DATA = "data";
+	public static final String SCHEME_FILESYSTEM = "filesystem";
+	public static final String SCHEME_FTP = "ftp";
+	public static final String SCHEME_FILE = "file";
+	public static final String SCHEME_GOPHER = "gopher";
+	public static final String SCHEME_HTTP = "http";
+	public static final String SCHEME_HTTPS = "https";
+	public static final String SCHEME_WS = "ws";
+	public static final String SCHEME_WSS = "wss";
+
 	private static final Map<String, Integer> specialSchemes = new HashMap<>();
 	private static final List<String> localSchemes = Arrays.asList(
-			"about",
-			"blob",
-			"data",
-			"filesystem");
+			SCHEME_ABOUT,
+			SCHEME_BLOB,
+			SCHEME_DATA,
+			SCHEME_FILESYSTEM);
 
 	static {
-		specialSchemes.put("ftp", 21);
-		specialSchemes.put("file", -1);
-		specialSchemes.put("gopher", 70);
-		specialSchemes.put("http", 80);
-		specialSchemes.put("https", 443);
-		specialSchemes.put("ws", 80);
-		specialSchemes.put("wss", 443);
+		specialSchemes.put(SCHEME_FTP, 21);
+		specialSchemes.put(SCHEME_FILE, -1);
+		specialSchemes.put(SCHEME_GOPHER, 70);
+		specialSchemes.put(SCHEME_HTTP, 80);
+		specialSchemes.put(SCHEME_HTTPS, 443);
+		specialSchemes.put(SCHEME_WS, 80);
+		specialSchemes.put(SCHEME_WSS, 443);
 	}
 
 	/**
@@ -51,14 +63,15 @@ public class SchemeHelper {
 	 * @see <a href="https://url.spec.whatwg.org/#http-scheme">#http-scheme</a>
 	 */
 	public static boolean isHTTPScheme(String scheme) {
-		return "http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme);
+		return SCHEME_HTTP.equalsIgnoreCase(scheme) ||
+				SCHEME_HTTPS.equalsIgnoreCase(scheme);
 	}
 
 	/**
 	 * @see <a href="https://url.spec.whatwg.org/#network-scheme">#network-scheme</a>
 	 */
 	public static boolean isNetworkScheme(String scheme) {
-		return isHTTPScheme(scheme) || "ftp".equalsIgnoreCase(scheme);
+		return isHTTPScheme(scheme) || SCHEME_FTP.equalsIgnoreCase(scheme);
 	}
 
 	/**
@@ -67,10 +80,10 @@ public class SchemeHelper {
 	public static boolean isFetchScheme(String scheme) {
 		return isLocalScheme(scheme) ||
 				isNetworkScheme(scheme) ||
-				FileSchemeHelper.isFileScheme(scheme);
+				SCHEME_FILE.equalsIgnoreCase(scheme);
 	}
 
 	public static boolean isSpecialSchemeNotFile(String scheme) {
-		return isSpecialScheme(scheme) && !"file".equalsIgnoreCase(scheme);
+		return isSpecialScheme(scheme) && !SCHEME_FILE.equalsIgnoreCase(scheme);
 	}
 }

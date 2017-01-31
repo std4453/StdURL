@@ -2,7 +2,6 @@ package org.stdurl.parser;
 
 import org.stdurl.URL;
 import org.stdurl.helpers.ASCIIHelper;
-import org.stdurl.helpers.FileSchemeHelper;
 import org.stdurl.helpers.SchemeHelper;
 
 import java.util.Objects;
@@ -36,7 +35,7 @@ public class SchemeState implements IParserState {
 				return;
 			}
 
-			if (FileSchemeHelper.isFileScheme(context.scheme)) { // 2.5
+			if ("file".equalsIgnoreCase(context.scheme)) { // 2.5
 				if (context.getRemainingAt(0) != '/' ||
 						context.getRemainingAt(1) != '/')
 					context.reportSyntaxViolation(
@@ -54,7 +53,7 @@ public class SchemeState implements IParserState {
 			} else { // 2.9
 				context.setCannotBeABaseURL(true);
 				context.path.add("");
-				context.setState(ParserStates.CANNOTBEABASEURL_PATH_STATE);
+				context.setState(ParserStates.CANNOT_BE_A_BASE_URL_PATH_STATE);
 			}
 		} else if (!stateOverrideGiven) { // 3
 			context.buffer.setLength(0);

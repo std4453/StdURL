@@ -2,7 +2,6 @@ package org.stdurl;
 
 import org.stdurl.encoding.PercentEncoder;
 import org.stdurl.encoding.UserinfoEncodeSet;
-import org.stdurl.helpers.FileSchemeHelper;
 import org.stdurl.helpers.PathHelper;
 import org.stdurl.helpers.StringHelper;
 import org.stdurl.host.Host;
@@ -367,7 +366,7 @@ public class URL {
 	 */
 	public void setPort(String port) {
 		if (this.host == null || this.cannotBeABaseURL ||
-				FileSchemeHelper.isFileScheme(this.scheme)) return;
+				"file".equalsIgnoreCase(this.scheme)) return;
 		BasicURLParser.parse(port, this, ParserStates.PORT_STATE);
 	}
 
@@ -550,7 +549,7 @@ public class URL {
 			output.append(HostHelper.serialize(this.host));
 			if (this.port != -1)
 				output.append(':').append(this.port);
-		} else if (FileSchemeHelper.isFileScheme(this.scheme))
+		} else if ("file".equalsIgnoreCase(this.scheme))
 			output.append("//");
 
 		if (this.cannotBeABaseURL) output.append(this.path.get(0));

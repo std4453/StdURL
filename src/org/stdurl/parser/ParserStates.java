@@ -89,7 +89,7 @@ public class ParserStates {
 	/**
 	 * @see CannotBeABaseURLPathState
 	 */
-	public static final int CANNOTBEABASEURL_PATH_STATE = 19;
+	public static final int CANNOT_BE_A_BASE_URL_PATH_STATE = 19;
 	/**
 	 * @see QueryState
 	 */
@@ -98,7 +98,6 @@ public class ParserStates {
 	 * @see FragmentState
 	 */
 	public static final int FRAGMENT_STATE = 21;
-
 
 	static {
 		register(SCHEME_START_STATE, new SchemeStartState());
@@ -122,7 +121,7 @@ public class ParserStates {
 		register(FILE_HOST_STATE, new FileHostState());
 		register(PATH_START_STATE, new PathStartState());
 		register(PATH_STATE, new PathState());
-		register(CANNOTBEABASEURL_PATH_STATE, new CannotBeABaseURLPathState());
+		register(CANNOT_BE_A_BASE_URL_PATH_STATE, new CannotBeABaseURLPathState());
 		register(QUERY_STATE, new QueryState());
 		register(FRAGMENT_STATE, new FragmentState());
 	}

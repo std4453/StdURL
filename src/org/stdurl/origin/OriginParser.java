@@ -1,6 +1,7 @@
 package org.stdurl.origin;
 
 import org.stdurl.URL;
+import org.stdurl.helpers.SchemeHelper;
 import org.stdurl.parser.BasicURLParser;
 
 /**
@@ -21,21 +22,21 @@ public class OriginParser {
 		String scheme = url.getSchemeInternal();
 
 		switch (scheme) {
-			case "blob":
+			case SchemeHelper.SCHEME_BLOB:
 				URL parsedURL = BasicURLParser.parse(url.getPathInternal().get(0));
 				return parsedURL == null || parsedURL.isFailure() ?
 						Origin.opaqueOrigin : parsedURL.getOriginObject();
-			case "ftp":
-			case "gopher":
-			case "http":
-			case "https":
-			case "ws":
-			case "wss":
+			case SchemeHelper.SCHEME_FTP:
+			case SchemeHelper.SCHEME_GOPHER:
+			case SchemeHelper.SCHEME_HTTP:
+			case SchemeHelper.SCHEME_HTTPS:
+			case SchemeHelper.SCHEME_WS:
+			case SchemeHelper.SCHEME_WSS:
 				return new Origin(url.getSchemeInternal(),
 						url.getHostInternal(),
 						url.getPortInternal(),
 						null);
-			case "file":
+			case SchemeHelper.SCHEME_FILE:
 				// It is pretty frustrating to see written in the standard:
 				//   Unfortunate as it is, this is left as an exercise to the reader.
 				//   When in doubt, return a new opaque origin.

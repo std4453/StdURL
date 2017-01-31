@@ -2,6 +2,7 @@ package org.stdurl.parser;
 
 import org.stdurl.helpers.FileSchemeHelper;
 import org.stdurl.helpers.PathHelper;
+import org.stdurl.helpers.SchemeHelper;
 import org.stdurl.helpers.StringHelper;
 
 /**
@@ -10,12 +11,13 @@ import org.stdurl.helpers.StringHelper;
 public class FileState implements IParserState {
 	@Override
 	public void execute(ParserContext context) throws Throwable {
-		context.setScheme("file");
+		context.setScheme(SchemeHelper.SCHEME_FILE);
 
 		switch (context.c) {
 			case 0:
 				if (context.base != null &&
-						FileSchemeHelper.isFileScheme(context.base.getSchemeInternal())) {
+						SchemeHelper.SCHEME_FILE.equalsIgnoreCase(
+								context.base.getSchemeInternal())) {
 					context.setHost(context.base.getHostInternal());
 					context.path.addAll(context.base.getPathInternal());
 					context.setQuery(context.base.getQueryInternal());
@@ -29,7 +31,8 @@ public class FileState implements IParserState {
 				break;
 			case '?':
 				if (context.base != null &&
-						FileSchemeHelper.isFileScheme(context.base.getSchemeInternal())) {
+						SchemeHelper.SCHEME_FILE.equalsIgnoreCase(
+								context.base.getSchemeInternal())) {
 					context.setHost(context.base.getHostInternal());
 					context.path.addAll(context.base.getPathInternal());
 					context.setQuery("");
@@ -38,7 +41,8 @@ public class FileState implements IParserState {
 				break;
 			case '#':
 				if (context.base != null &&
-						FileSchemeHelper.isFileScheme(context.base.getSchemeInternal())) {
+						SchemeHelper.SCHEME_FILE.equalsIgnoreCase(
+								context.base.getSchemeInternal())) {
 					context.setHost(context.base.getHostInternal());
 					context.path.addAll(context.base.getPathInternal());
 					context.setQuery(context.base.getQueryInternal());
@@ -48,7 +52,8 @@ public class FileState implements IParserState {
 				break;
 			default:
 				boolean flag = context.base != null &&
-						FileSchemeHelper.isFileScheme(context.base.getSchemeInternal());
+						SchemeHelper.SCHEME_FILE.equalsIgnoreCase(
+								context.base.getSchemeInternal());
 				boolean flag2 = false;
 				if (flag) {
 					flag2 = !FileSchemeHelper.isWindowsDriveLetter(

@@ -22,8 +22,4 @@ public class FileSchemeHelper {
 				ASCIIHelper.isASCIIAlpha(codePoints.codePointAt(0)) &&
 				codePoints.codePointAt(1) == ':';
 	}
-
-	public static boolean isFileScheme(String scheme) {
-		return "file".equalsIgnoreCase(scheme);
-	}
 }
