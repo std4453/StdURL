@@ -14,8 +14,8 @@ import java.util.List;
  * step of the parser defined in the URL Standard. It is extracted into a separate
  * class, and provided with internal control flags and methods, it can be used by test
  * classes of each separate parser states ( which cannot be achieved only by calling
- * {@linkplain BasicURLParser#parse(String, URL, Charset, SyntaxViolationListener, URL,
- * int) BasicURLParser.parse()} ).<br>
+ * {@linkplain BasicURLParser#parse(String, URL, Charset, URL, int,
+ * SyntaxViolationListener) BasicURLParser.parse()} ).<br>
  */
 public class ParserStateMachine {
 	// ========== STATE MACHINE CONTEXT ==========

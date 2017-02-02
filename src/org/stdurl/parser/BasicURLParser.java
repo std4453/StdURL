@@ -21,7 +21,7 @@ public class BasicURLParser {
 	 * @return The parsed {@link URL} object;
 	 */
 	public static URL parse(String input) {
-		return parse(input, null, ParserStates.NO_SUCH_STATE);
+		return parse(input, SimpleParserListener.instance);
 	}
 
 	/**
@@ -33,7 +33,7 @@ public class BasicURLParser {
 	 * @return The parsed {@link URL} object;
 	 */
 	public static URL parse(String input, SyntaxViolationListener listener) {
-		return parse(input, null, null, listener, null, ParserStates.NO_SUCH_STATE);
+		return parse(input, null, listener);
 	}
 
 	/**
@@ -49,13 +49,12 @@ public class BasicURLParser {
 	 * @return The parsed URL.
 	 */
 	public static URL parse(String input, URL url, int stateOverride) {
-		return parse(input, null, null, SimpleParserListener.instance,
-				url, stateOverride);
+		return parse(input, null, null, url,
+				stateOverride, SimpleParserListener.instance);
 	}
 
 	/**
-	 * Parse input {@link String} with {@code base} given and use for all other
-	 * parameters the default value.
+	 * Parse input {@link String} with {@code base} given.
 	 *
 	 * @param input
 	 * 		The input {@link String}.
@@ -65,12 +64,27 @@ public class BasicURLParser {
 	 * @return The parsed {@link URL}.
 	 */
 	public static URL parse(String input, URL base) {
-		return parse(input, base, null);
+		return parse(input, base, SimpleParserListener.instance);
 	}
 
 	/**
-	 * Parse input {@link String} with {@code base} and {@code encodingOverride} given
-	 * and use for all other parameters the default value.
+	 * Parse input {@link String} with {@code base} given.
+	 *
+	 * @param input
+	 * 		The input {@link String}.
+	 * @param base
+	 * 		The base URL.
+	 * @param listener
+	 * 		Listener of the parser.
+	 *
+	 * @return The parsed {@link URL}.
+	 */
+	public static URL parse(String input, URL base, SyntaxViolationListener listener) {
+		return parse(input, base, null, listener);
+	}
+
+	/**
+	 * Parse input {@link String} with {@code base} and {@code encodingOverride} given.
 	 *
 	 * @param input
 	 * 		The input {@link String}.
@@ -81,10 +95,29 @@ public class BasicURLParser {
 	 *
 	 * @return The parsed {@link URL}.
 	 */
-	@SuppressWarnings("SameParameterValue")
 	public static URL parse(String input, URL base, Charset encodingOverride) {
-		return parse(input, base, encodingOverride, SimpleParserListener.instance,
-				null, ParserStates.NO_SUCH_STATE);
+		return parse(input, base, encodingOverride, SimpleParserListener.instance);
+	}
+
+	/**
+	 * Parse input {@link String} with {@code base} and {@code encodingOverride} given.
+	 *
+	 * @param input
+	 * 		The input {@link String}.
+	 * @param base
+	 * 		The base URL.
+	 * @param encodingOverride
+	 * 		Override the encoding. (optional)
+	 * @param listener
+	 * 		Listener of the parser.
+	 *
+	 * @return The parsed {@link URL}.
+	 */
+	public static URL parse(
+			String input, URL base, Charset encodingOverride,
+			SyntaxViolationListener listener) {
+		return parse(input, base, encodingOverride, null,
+				ParserStates.NO_SUCH_STATE, listener);
 	}
 
 	/**
@@ -104,20 +137,19 @@ public class BasicURLParser {
 	 * 		The base URL. (optional)
 	 * @param encodingOverride
 	 * 		Overrides the encoding of the URL query string. (optional)
-	 * @param listener
-	 * 		Listener of the parser, listens various events during the execution of the
-	 * 		parser.
 	 * @param url
 	 * 		The given url. (optional)
 	 * @param stateOverride
 	 * 		Override the start state, 0 for default. (optional)
+	 * @param listener
+	 * 		Listener of the parser, listens various events during the execution of the
+	 * 		parser.
 	 *
 	 * @return The parsed URL.
 	 */
 	public static URL parse(
 			String input, URL base, Charset encodingOverride,
-			SyntaxViolationListener listener,
-			URL url, int stateOverride) {
+			URL url, int stateOverride, SyntaxViolationListener listener) {
 		int[] codePoints = StringHelper.toCodePoints(input);
 
 		if (url == null) { // 1
