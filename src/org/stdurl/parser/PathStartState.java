@@ -7,15 +7,15 @@ import org.stdurl.helpers.SchemeHelper;
  */
 public class PathStartState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
 		// 1
-		boolean flag = SchemeHelper.isSpecialScheme(context.scheme) && c == '\\';
-		if (flag) context.reportSyntaxViolation("Backslash should be slash.");
+		boolean flag = SchemeHelper.isSpecialScheme(machine.scheme) && c == '\\';
+		if (flag) machine.reportSyntaxViolation("Backslash should be slash.");
 
 		// 2
-		context.setState(ParserStates.PATH_STATE);
-		if (c != '/' && !flag) context.setPointer(context.pointer - 1);
+		machine.setState(ParserStates.PATH_STATE);
+		if (c != '/' && !flag) machine.setPointer(machine.pointer - 1);
 	}
 }

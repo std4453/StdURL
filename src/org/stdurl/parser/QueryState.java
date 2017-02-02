@@ -11,20 +11,20 @@ import org.stdurl.helpers.SchemeHelper;
  */
 public class QueryState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
-		if (c == 0 || (!ParserStates.hasState(context.stateOverride) && c == '#')) { // 1
-			if (!SchemeHelper.isSpecialScheme(context.scheme) ||
-					SchemeHelper.SCHEME_WS.equalsIgnoreCase(context.scheme) ||
-					SchemeHelper.SCHEME_WSS.equalsIgnoreCase(context.scheme))
-				context.setEncoding(EncodingHelper.UTF8); // 1.1
+		if (c == 0 || (!ParserStates.hasState(machine.stateOverride) && c == '#')) { // 1
+			if (!SchemeHelper.isSpecialScheme(machine.scheme) ||
+					SchemeHelper.SCHEME_WS.equalsIgnoreCase(machine.scheme) ||
+					SchemeHelper.SCHEME_WSS.equalsIgnoreCase(machine.scheme))
+				machine.setEncoding(EncodingHelper.UTF8); // 1.1
 
-			byte[] encoded = context.buffer.toString().getBytes(context.encoding); // 1.2
+			byte[] encoded = machine.buffer.toString().getBytes(machine.encoding); // 1.2
 
 			// 1.3
 			StringBuilder sb = new StringBuilder(
-					context.query == null ? "" : context.query);
+					machine.query == null ? "" : machine.query);
 			for (byte b : encoded) {
 				int i = ((int) b) & 0xFF;
 				if (i < 0x21 || i > 0x7E ||
@@ -32,23 +32,23 @@ public class QueryState implements IParserState {
 					PercentEncoder.encode(b, sb);
 				else sb.appendCodePoint(i);
 			}
-			context.setQuery(sb.toString());
+			machine.setQuery(sb.toString());
 
-			context.buffer.setLength(0); // 1.4
+			machine.buffer.setLength(0); // 1.4
 
 			if (c == '#') { // 1.5
-				context.setFragment("");
-				context.setState(ParserStates.FRAGMENT_STATE);
+				machine.setFragment("");
+				machine.setState(ParserStates.FRAGMENT_STATE);
 			}
 		} else { // 2
 			if (!CodePointHelper.isURLCodePoint(c) && c != '%')
-				context.reportSyntaxViolation(new StringBuffer("Character '")
+				machine.reportSyntaxViolation(new StringBuffer("Character '")
 						.appendCodePoint(c).append("' unexpected.").toString());
-			if (c == '%' && (!ASCIIHelper.isASCIIHexDigit(context.getRemainingAt(0)) ||
-					!ASCIIHelper.isASCIIHexDigit(context.getRemainingAt(1))))
-				context.reportSyntaxViolation("'%' is not followed by two hex digits.");
+			if (c == '%' && (!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(0)) ||
+					!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(1))))
+				machine.reportSyntaxViolation("'%' is not followed by two hex digits.");
 
-			context.buffer.appendCodePoint(c);
+			machine.buffer.appendCodePoint(c);
 		}
 	}
 }

@@ -5,12 +5,12 @@ package org.stdurl.parser;
  */
 public class SpecialAuthorityIgnoreSlashesState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		if ("/\\".indexOf(context.c) != -1)
-			context.reportSyntaxViolation("Slash or backslash unexpected.");
+	public void execute(ParserStateMachine machine) throws Throwable {
+		if ("/\\".indexOf(machine.c) != -1)
+			machine.reportSyntaxViolation("Slash or backslash unexpected.");
 		else {
-			context.setState(ParserStates.AUTHORITY_STATE);
-			context.setPointer(context.pointer - 1);
+			machine.setState(ParserStates.AUTHORITY_STATE);
+			machine.setPointer(machine.pointer - 1);
 		}
 	}
 }

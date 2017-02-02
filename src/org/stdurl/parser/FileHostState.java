@@ -11,36 +11,36 @@ import org.stdurl.host.HostParser;
  */
 public class FileHostState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
 		if (c == 0 || "/\\?#".indexOf(c) != -1) { // 1
-			context.setPointer(context.pointer - 1);
+			machine.setPointer(machine.pointer - 1);
 
-			if (FileSchemeHelper.isWindowsDriveLetter(context.buffer.toString())) { // 1.1
-				context.reportSyntaxViolation("File host shouldn't be windows drive.");
-				context.setState(ParserStates.PATH_STATE);
-			} else if (context.buffer.length() == 0) { // 1.2
-				context.setState(ParserStates.PATH_START_STATE);
+			if (FileSchemeHelper.isWindowsDriveLetter(machine.buffer.toString())) { // 1.1
+				machine.reportSyntaxViolation("File host shouldn't be windows drive.");
+				machine.setState(ParserStates.PATH_STATE);
+			} else if (machine.buffer.length() == 0) { // 1.2
+				machine.setState(ParserStates.PATH_START_STATE);
 			} else { // 1.3
 				// 1.3.1
-				String input = context.buffer.toString();
-				Host host = HostParser.parseHost(input, context.listener);
+				String input = machine.buffer.toString();
+				Host host = HostParser.parseHost(input, machine.listener);
 
 				// 1.3.2
 				if (host == null) {
-					context.setReturnValue(URL.failure);
+					machine.setReturnValue(URL.failure);
 					return;
 				}
 
-				if (!Domain.localhost.equals(host)) context.setHost(host); // 1.3.3
+				if (!Domain.localhost.equals(host)) machine.setHost(host); // 1.3.3
 
 				// 1.3.4
-				context.buffer.setLength(0);
-				context.setState(ParserStates.PATH_START_STATE);
+				machine.buffer.setLength(0);
+				machine.setState(ParserStates.PATH_START_STATE);
 			}
 		} else { // 2
-			context.buffer.appendCodePoint(c);
+			machine.buffer.appendCodePoint(c);
 		}
 	}
 }

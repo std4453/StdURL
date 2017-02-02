@@ -11,43 +11,43 @@ import org.stdurl.helpers.StringHelper;
  */
 public class AuthorityState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
 		// 1
 		if (c == '@') {
-			context.reportSyntaxViolation("'@' unexpected."); // 1.1
-			if (context.atFlag) // 1.2
-				context.buffer.append("%40");
-			context.setAtFlag(true); // 1.3
+			machine.reportSyntaxViolation("'@' unexpected."); // 1.1
+			if (machine.atFlag) // 1.2
+				machine.buffer.append("%40");
+			machine.setAtFlag(true); // 1.3
 
 			// 1.4
-			int[] bufferCPs = StringHelper.toCodePoints(context.buffer.toString());
+			int[] bufferCPs = StringHelper.toCodePoints(machine.buffer.toString());
 			for (int codePoint : bufferCPs) {
-				if (codePoint == ':' && !context.passwordTokenSeenFlag) {
-					context.setPasswordTokenSeenFlag(true);
+				if (codePoint == ':' && !machine.passwordTokenSeenFlag) {
+					machine.setPasswordTokenSeenFlag(true);
 					continue;
 				}
 				String encodedCodePoints = PercentEncoder.utf8Encode(
 						codePoint, UserinfoEncodeSet.instance);
-				if (context.passwordTokenSeenFlag)
-					context.setPassword(context.password + encodedCodePoints);
-				else context.setUsername(context.username + encodedCodePoints);
+				if (machine.passwordTokenSeenFlag)
+					machine.setPassword(machine.password + encodedCodePoints);
+				else machine.setUsername(machine.username + encodedCodePoints);
 			}
 
-			context.buffer.setLength(0); // 1.5
+			machine.buffer.setLength(0); // 1.5
 		} else // 2
 			if (c == 0 || "/?#".indexOf(c) != -1 ||
-					(c == '\\' && SchemeHelper.isSpecialScheme(context.scheme)))
-				if (context.atFlag && context.buffer.length() == 0) {
-					context.reportSyntaxViolation("Empty host forbidden.");
-					context.setReturnValue(URL.failure);
+					(c == '\\' && SchemeHelper.isSpecialScheme(machine.scheme)))
+				if (machine.atFlag && machine.buffer.length() == 0) {
+					machine.reportSyntaxViolation("Empty host forbidden.");
+					machine.setReturnValue(URL.failure);
 				} else {
-					context.setPointer(context.pointer - 1
-							- context.buffer.codePointCount(0, context.buffer.length()));
-					context.buffer.setLength(0);
-					context.setState(ParserStates.HOST_STATE);
+					machine.setPointer(machine.pointer - 1
+							- machine.buffer.codePointCount(0, machine.buffer.length()));
+					machine.buffer.setLength(0);
+					machine.setState(ParserStates.HOST_STATE);
 				}
-			else context.buffer.appendCodePoint(c);
+			else machine.buffer.appendCodePoint(c);
 	}
 }

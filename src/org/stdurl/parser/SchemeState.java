@@ -11,57 +11,57 @@ import java.util.Objects;
  */
 public class SchemeState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
-		boolean stateOverrideGiven = ParserStates.hasState(context.stateOverride);
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
+		boolean stateOverrideGiven = ParserStates.hasState(machine.stateOverride);
 
 		if (ASCIIHelper.isASCIIAlphanumeric(c) || "+-.".indexOf(c) != -1) { // 1
-			context.buffer.appendCodePoint(ASCIIHelper.toLowerCase(c));
+			machine.buffer.appendCodePoint(ASCIIHelper.toLowerCase(c));
 		} else if (c == ':') { // 2
 			if (stateOverrideGiven) { // 2.1
-				String buf = context.buffer.toString();
-				if (SchemeHelper.isSpecialScheme(context.scheme) ^
+				String buf = machine.buffer.toString();
+				if (SchemeHelper.isSpecialScheme(machine.scheme) ^
 						SchemeHelper.isSpecialScheme(buf)) {
-					context.setTerminateRequested(true);
+					machine.setTerminateRequested();
 					return;
 				}
 			}
 
-			context.setScheme(context.buffer.toString()); // 2.2
-			context.buffer.setLength(0); // 2.3
+			machine.setScheme(machine.buffer.toString()); // 2.2
+			machine.buffer.setLength(0); // 2.3
 
 			if (stateOverrideGiven) { // 2.4
-				context.setTerminateRequested(true);
+				machine.setTerminateRequested();
 				return;
 			}
 
-			if ("file".equalsIgnoreCase(context.scheme)) { // 2.5
-				if (context.getRemainingAt(0) != '/' ||
-						context.getRemainingAt(1) != '/')
-					context.reportSyntaxViolation(
+			if ("file".equalsIgnoreCase(machine.scheme)) { // 2.5
+				if (machine.getRemainingAt(0) != '/' ||
+						machine.getRemainingAt(1) != '/')
+					machine.reportSyntaxViolation(
 							"Path of file scheme doesn't start with \"//\".");
-				context.setState(ParserStates.FILE_STATE);
-			} else if (SchemeHelper.isSpecialScheme(context.scheme)) {
+				machine.setState(ParserStates.FILE_STATE);
+			} else if (SchemeHelper.isSpecialScheme(machine.scheme)) {
 				// 2.6 + 2.7
-				context.setState(context.base != null &&
-						Objects.equals(context.base.getSchemeInternal(), context.scheme) ?
+				machine.setState(machine.base != null &&
+						Objects.equals(machine.base.getSchemeInternal(), machine.scheme) ?
 						ParserStates.SPECIAL_RELATIVE_OR_AUTHORITY_STATE :
 						ParserStates.SPECIAL_AUTHORITY_SLASHES_STATE);
-			} else if (context.getRemainingAt(0) == '/') { // 2.8
-				context.setState(ParserStates.PATH_OR_AUTHORITY_STATE);
-				context.setPointer(context.pointer + 1);
+			} else if (machine.getRemainingAt(0) == '/') { // 2.8
+				machine.setState(ParserStates.PATH_OR_AUTHORITY_STATE);
+				machine.setPointer(machine.pointer + 1);
 			} else { // 2.9
-				context.setCannotBeABaseURL(true);
-				context.path.add("");
-				context.setState(ParserStates.CANNOT_BE_A_BASE_URL_PATH_STATE);
+				machine.setCannotBeABaseURL(true);
+				machine.path.add("");
+				machine.setState(ParserStates.CANNOT_BE_A_BASE_URL_PATH_STATE);
 			}
 		} else if (!stateOverrideGiven) { // 3
-			context.buffer.setLength(0);
-			context.setState(ParserStates.NO_SCHEME_STATE);
-			context.setPointer(-1);
+			machine.buffer.setLength(0);
+			machine.setState(ParserStates.NO_SCHEME_STATE);
+			machine.setPointer(-1);
 		} else { //4
-			context.reportSyntaxViolation("State override does nothing.");
-			context.setReturnValue(URL.failure);
+			machine.reportSyntaxViolation("State override does nothing.");
+			machine.setReturnValue(URL.failure);
 		}
 	}
 }

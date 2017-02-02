@@ -7,54 +7,54 @@ import org.stdurl.helpers.SchemeHelper;
  */
 public class RelativeState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		context.setScheme(context.base.getSchemeInternal());
+	public void execute(ParserStateMachine machine) throws Throwable {
+		machine.setScheme(machine.base.getSchemeInternal());
 
-		switch (context.c) {
+		switch (machine.c) {
 			case 0:
-				context.setUsername(context.base.getUsernameInternal());
-				context.setPassword(context.base.getPasswordInternal());
-				context.setHost(context.base.getHostInternal());
-				context.setPort(context.base.getPortInternal());
-				context.path.addAll(context.base.getPathInternal());
-				context.setQuery(context.base.getQueryInternal());
+				machine.setUsername(machine.base.getUsernameInternal());
+				machine.setPassword(machine.base.getPasswordInternal());
+				machine.setHost(machine.base.getHostInternal());
+				machine.setPort(machine.base.getPortInternal());
+				machine.path.addAll(machine.base.getPathInternal());
+				machine.setQuery(machine.base.getQueryInternal());
 				break;
 			case '/':
-				context.setState(ParserStates.RELATIVE_SLASH_STATE);
+				machine.setState(ParserStates.RELATIVE_SLASH_STATE);
 				break;
 			case '?':
-				context.setUsername(context.base.getUsernameInternal());
-				context.setPassword(context.base.getPasswordInternal());
-				context.setHost(context.base.getHostInternal());
-				context.setPort(context.base.getPortInternal());
-				context.path.addAll(context.base.getPathInternal());
-				context.setQuery("");
-				context.setState(ParserStates.QUERY_STATE);
+				machine.setUsername(machine.base.getUsernameInternal());
+				machine.setPassword(machine.base.getPasswordInternal());
+				machine.setHost(machine.base.getHostInternal());
+				machine.setPort(machine.base.getPortInternal());
+				machine.path.addAll(machine.base.getPathInternal());
+				machine.setQuery("");
+				machine.setState(ParserStates.QUERY_STATE);
 				break;
 			case '#':
-				context.setUsername(context.base.getUsernameInternal());
-				context.setPassword(context.base.getPasswordInternal());
-				context.setHost(context.base.getHostInternal());
-				context.setPort(context.base.getPortInternal());
-				context.path.addAll(context.base.getPathInternal());
-				context.setQuery(context.base.getQueryInternal());
-				context.setFragment("");
-				context.setState(ParserStates.FRAGMENT_STATE);
+				machine.setUsername(machine.base.getUsernameInternal());
+				machine.setPassword(machine.base.getPasswordInternal());
+				machine.setHost(machine.base.getHostInternal());
+				machine.setPort(machine.base.getPortInternal());
+				machine.path.addAll(machine.base.getPathInternal());
+				machine.setQuery(machine.base.getQueryInternal());
+				machine.setFragment("");
+				machine.setState(ParserStates.FRAGMENT_STATE);
 				break;
 			default:
-				if (SchemeHelper.isSpecialScheme(context.scheme) && context.c == '\\') {
-					context.reportSyntaxViolation("Backslash should be slash.");
-					context.setState(ParserStates.RELATIVE_SLASH_STATE);
+				if (SchemeHelper.isSpecialScheme(machine.scheme) && machine.c == '\\') {
+					machine.reportSyntaxViolation("Backslash should be slash.");
+					machine.setState(ParserStates.RELATIVE_SLASH_STATE);
 				} else {
-					context.setUsername(context.base.getUsernameInternal());
-					context.setPassword(context.base.getPasswordInternal());
-					context.setHost(context.base.getHostInternal());
-					context.setPort(context.base.getPortInternal());
-					context.path.addAll(context.base.getPathInternal());
-					if (context.path.size() >= 1)
-						context.path.remove(context.path.size() - 1);
-					context.setState(ParserStates.PATH_STATE);
-					context.setPointer(context.pointer - 1);
+					machine.setUsername(machine.base.getUsernameInternal());
+					machine.setPassword(machine.base.getPasswordInternal());
+					machine.setHost(machine.base.getHostInternal());
+					machine.setPort(machine.base.getPortInternal());
+					machine.path.addAll(machine.base.getPathInternal());
+					if (machine.path.size() >= 1)
+						machine.path.remove(machine.path.size() - 1);
+					machine.setState(ParserStates.PATH_STATE);
+					machine.setPointer(machine.pointer - 1);
 				}
 		}
 	}

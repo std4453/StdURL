@@ -4,7 +4,6 @@ import org.stdurl.URL;
 import org.stdurl.host.Host;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -109,18 +108,16 @@ class ParserContext {
 	}
 
 	// ========== URL PARTS ==========
-	// @see URL
-	// default values are identical to those in URL.java
 
-	public String scheme = "";
-	public String username = "";
-	public String password = "";
-	public Host host = null;
-	public int port = -1;
-	public List<String> path = new ArrayList<>();
-	public String query = null;
-	public String fragment = null;
-	public boolean cannotBeABaseURL = false;
+	public String scheme;
+	public String username;
+	public String password;
+	public Host host;
+	public int port;
+	public List<String> path;
+	public String query;
+	public String fragment;
+	public boolean cannotBeABaseURL;
 
 	public void setScheme(String scheme) {
 		this.scheme = scheme;

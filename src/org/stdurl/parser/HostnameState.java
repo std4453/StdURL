@@ -10,65 +10,65 @@ import org.stdurl.host.HostParser;
  */
 public class HostnameState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
-		if (c == ':' && !context.bracketsFlag) { //1
-			if (context.buffer.length() == 0) { // 1.1
-				context.reportSyntaxViolation("Empty host forbidden.");
-				context.setReturnValue(URL.failure);
+		if (c == ':' && !machine.bracketsFlag) { //1
+			if (machine.buffer.length() == 0) { // 1.1
+				machine.reportSyntaxViolation("Empty host forbidden.");
+				machine.setReturnValue(URL.failure);
 				return;
 			}
 
 			// 1.2
-			String input = context.buffer.toString();
-			boolean isSpecial = SchemeHelper.isSpecialScheme(context.scheme);
-			Host host = HostParser.parseURLHost(input, isSpecial, context.listener);
+			String input = machine.buffer.toString();
+			boolean isSpecial = SchemeHelper.isSpecialScheme(machine.scheme);
+			Host host = HostParser.parseURLHost(input, isSpecial, machine.listener);
 
 			if (host == null) { // 1.3
-				context.setReturnValue(URL.failure);
+				machine.setReturnValue(URL.failure);
 				return;
 			}
 
 			// 1.4
-			context.setHost(host);
-			context.buffer.setLength(0);
-			context.setState(ParserStates.PORT_STATE);
+			machine.setHost(host);
+			machine.buffer.setLength(0);
+			machine.setState(ParserStates.PORT_STATE);
 
 			// 1.5
-			if (context.stateOverride == ParserStates.HOSTNAME_STATE)
-				context.setTerminateRequested(true);
+			if (machine.stateOverride == ParserStates.HOSTNAME_STATE)
+				machine.setTerminateRequested();
 		} else if (c == 0 || "/?#".indexOf(c) != -1 ||
-				(SchemeHelper.isSpecialScheme(context.scheme) && c == '\\')) { // 2
-			context.setPointer(context.pointer - 1);
-			boolean isSpecial = SchemeHelper.isSpecialScheme(context.scheme);
+				(SchemeHelper.isSpecialScheme(machine.scheme) && c == '\\')) { // 2
+			machine.setPointer(machine.pointer - 1);
+			boolean isSpecial = SchemeHelper.isSpecialScheme(machine.scheme);
 
-			if (isSpecial && context.buffer.length() == 0) { // 2.1
-				context.reportSyntaxViolation("Empty host forbidden.");
-				context.setReturnValue(URL.failure);
+			if (isSpecial && machine.buffer.length() == 0) { // 2.1
+				machine.reportSyntaxViolation("Empty host forbidden.");
+				machine.setReturnValue(URL.failure);
 				return;
 			}
 
 			// 2.2
-			String input = context.buffer.toString();
-			Host host = HostParser.parseURLHost(input, isSpecial, context.listener);
+			String input = machine.buffer.toString();
+			Host host = HostParser.parseURLHost(input, isSpecial, machine.listener);
 
 			if (host == null) { // 2.3
-				context.setReturnValue(URL.failure);
+				machine.setReturnValue(URL.failure);
 				return;
 			}
 
 			// 2.4
-			context.setHost(host);
-			context.buffer.setLength(0);
-			context.setState(ParserStates.PATH_START_STATE);
+			machine.setHost(host);
+			machine.buffer.setLength(0);
+			machine.setState(ParserStates.PATH_START_STATE);
 
-			if (ParserStates.hasState(context.stateOverride)) // 2.5
-				context.setTerminateRequested(true);
+			if (ParserStates.hasState(machine.stateOverride)) // 2.5
+				machine.setTerminateRequested();
 		} else { // 3
-			if (c == '[') context.setBracketsFlag(true);
-			else if (c == ']') context.setBracketsFlag(false);
-			context.buffer.appendCodePoint(c);
+			if (c == '[') machine.setBracketsFlag(true);
+			else if (c == ']') machine.setBracketsFlag(false);
+			machine.buffer.appendCodePoint(c);
 		}
 	}
 }

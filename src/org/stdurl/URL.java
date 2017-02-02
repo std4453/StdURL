@@ -54,40 +54,13 @@ public class URL {
 	}
 
 	/**
-	 * Factory method to create a {@link URL} instance, called only internally, does
-	 * not validate input, therefore should be used only when the given arguments are
-	 * promised to be valid for a URL.
+	 * Factory method to create a new empty {@link URL} instance, with all its parts
+	 * set to the default value, called only internally.
 	 *
-	 * @param scheme
-	 * 		The scheme of the URL.
-	 * @param username
-	 * 		The username of the URL credential.
-	 * @param password
-	 * 		The password of the URL credential.
-	 * @param host
-	 * 		The host of the URL.
-	 * @param port
-	 * 		The port of the URL.
-	 * @param path
-	 * 		The path of the URL.
-	 * @param query
-	 * 		The query string of the URL.
-	 * @param fragment
-	 * 		The fragment part of the URL.
-	 * @param cannotBeABaseURL
-	 * 		Whether the URL can be a base URL.
-	 * @param object
-	 * 		The associated object to the URL.
+	 * @return The constructed {@link URL} instance.
 	 */
-	public static URL createInternal(
-			String scheme, String username, String password,
-			Host host, int port,
-			List<String> path, String query, String fragment,
-			boolean cannotBeABaseURL,
-			@SuppressWarnings("SameParameterValue") Object object,
-			Charset queryEncoding) {
-		return new URL(scheme, username, password, host, port, path, query, fragment,
-				cannotBeABaseURL, object, queryEncoding);
+	public static URL createInternal() {
+		return new URL();
 	}
 
 	/**

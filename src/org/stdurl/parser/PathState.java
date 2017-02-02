@@ -9,59 +9,59 @@ import org.stdurl.helpers.*;
  */
 public class PathState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
 		// 1
-		boolean flag1 = SchemeHelper.isSpecialScheme(context.scheme) && c == '\\';
+		boolean flag1 = SchemeHelper.isSpecialScheme(machine.scheme) && c == '\\';
 		if (c == 0 || c == '/' || flag1 ||
-				(!ParserStates.hasState(context.stateOverride)
+				(!ParserStates.hasState(machine.stateOverride)
 						&& "?#".indexOf(c) != -1)) {
 			if (flag1) // 1.1
-				context.reportSyntaxViolation("Backslash should be slash.");
+				machine.reportSyntaxViolation("Backslash should be slash.");
 
-			String buf = context.buffer.toString();
+			String buf = machine.buffer.toString();
 
 			if (PathHelper.isDoubleDotPathSegment(buf)) { // 1.2
-				PathHelper.shortenPath(context.path, context.scheme);
+				PathHelper.shortenPath(machine.path, machine.scheme);
 				if (c != '/' && !flag1)
-					context.path.add("");
+					machine.path.add("");
 			} else if (PathHelper.isSingleDotPathSegment(buf) &&
 					c != '/' && !flag1) { // 1.3
-				context.path.add("");
+				machine.path.add("");
 			} else if (!PathHelper.isSingleDotPathSegment(buf)) { // 1.4
-				if (SchemeHelper.SCHEME_FILE.equalsIgnoreCase(context.scheme) &&
-						context.path.isEmpty() &&
+				if (SchemeHelper.SCHEME_FILE.equalsIgnoreCase(machine.scheme) &&
+						machine.path.isEmpty() &&
 						FileSchemeHelper.isWindowsDriveLetter(buf)) { // 1.4.1
-					if (context.host != null) context.reportSyntaxViolation(
+					if (machine.host != null) machine.reportSyntaxViolation(
 							"Local file shouldn't have a host");
-					context.setHost(null);
-					context.buffer.setCharAt(
-							context.buffer.offsetByCodePoints(0, 1), ':');
+					machine.setHost(null);
+					machine.buffer.setCharAt(
+							machine.buffer.offsetByCodePoints(0, 1), ':');
 				}
-				context.path.add(context.buffer.toString());
+				machine.path.add(machine.buffer.toString());
 			}
 
-			context.buffer.setLength(0); // 1.5
+			machine.buffer.setLength(0); // 1.5
 
 			if (c == '?') { // 1.6
-				context.setQuery("");
-				context.setState(ParserStates.QUERY_STATE);
+				machine.setQuery("");
+				machine.setState(ParserStates.QUERY_STATE);
 			} else if (c == '#') { // 1.7
-				context.setFragment("");
-				context.setState(ParserStates.FRAGMENT_STATE);
+				machine.setFragment("");
+				machine.setState(ParserStates.FRAGMENT_STATE);
 			}
 		} else { // 2
 			if (!CodePointHelper.isURLCodePoint(c) && c != '%')
-				context.reportSyntaxViolation(new StringBuilder("Character '")
+				machine.reportSyntaxViolation(new StringBuilder("Character '")
 						.appendCodePoint(c).append("' unexpected.").toString());
 			if (c == '%' && (
-					!ASCIIHelper.isASCIIHexDigit(context.getRemainingAt(0)) ||
-							!ASCIIHelper.isASCIIHexDigit(context.getRemainingAt(1))))
-				context.reportSyntaxViolation("'%' is not followed by two hex digits.");
+					!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(0)) ||
+							!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(1))))
+				machine.reportSyntaxViolation("'%' is not followed by two hex digits.");
 
 			String encoded = PercentEncoder.utf8Encode(c, DefaultEncodeSet.instance);
-			context.buffer.append(encoded);
+			machine.buffer.append(encoded);
 		}
 	}
 }

@@ -5,12 +5,12 @@ package org.stdurl.parser;
  */
 public class PathOrAuthorityState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		if (context.c == '/')
-			context.setState(ParserStates.AUTHORITY_STATE);
+	public void execute(ParserStateMachine machine) throws Throwable {
+		if (machine.c == '/')
+			machine.setState(ParserStates.AUTHORITY_STATE);
 		else {
-			context.setState(ParserStates.PATH_STATE);
-			context.setPointer(context.pointer - 1);
+			machine.setState(ParserStates.PATH_STATE);
+			machine.setPointer(machine.pointer - 1);
 		}
 	}
 }

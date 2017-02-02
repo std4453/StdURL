@@ -5,15 +5,15 @@ package org.stdurl.parser;
  */
 public class SpecialRelativeOrAuthorityState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
-		if (c == '/' && context.getRemainingAt(0) == '/') {
-			context.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
-			context.setPointer(context.pointer + 1);
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
+		if (c == '/' && machine.getRemainingAt(0) == '/') {
+			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
+			machine.setPointer(machine.pointer + 1);
 		} else {
-			context.reportSyntaxViolation("Should start with \"//\".");
-			context.setState(ParserStates.RELATIVE_STATE);
-			context.setPointer(context.pointer - 1);
+			machine.reportSyntaxViolation("Should start with \"//\".");
+			machine.setState(ParserStates.RELATIVE_STATE);
+			machine.setPointer(machine.pointer - 1);
 		}
 	}
 }

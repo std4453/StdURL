@@ -9,22 +9,22 @@ import org.stdurl.helpers.SchemeHelper;
  */
 public class FileSlashState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
 		if ("\\/".indexOf(c) != -1) { // 1
 			if (c == '\\')
-				context.reportSyntaxViolation("Backslash should be slash.");
-			context.setState(ParserStates.FILE_HOST_STATE);
+				machine.reportSyntaxViolation("Backslash should be slash.");
+			machine.setState(ParserStates.FILE_HOST_STATE);
 		} else { // 2
-			URL base = context.base;
+			URL base = machine.base;
 			if (base != null &&
 					SchemeHelper.SCHEME_FILE.equalsIgnoreCase(base.getSchemeInternal()) &&
 					base.getPathInternal().size() >= 1 &&
 					FileSchemeHelper.isWindowsDriveLetter(base.getPathInternal().get(0)))
-				context.path.add(base.getPathInternal().get(0));
-			context.setState(ParserStates.PATH_STATE);
-			context.setPointer(context.pointer - 1);
+				machine.path.add(base.getPathInternal().get(0));
+			machine.setState(ParserStates.PATH_STATE);
+			machine.setPointer(machine.pointer - 1);
 		}
 	}
 }

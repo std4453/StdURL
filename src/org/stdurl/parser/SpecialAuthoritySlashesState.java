@@ -5,14 +5,14 @@ package org.stdurl.parser;
  */
 public class SpecialAuthoritySlashesState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		if (context.c == '/' && context.getRemainingAt(0) == '/') {
-			context.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
-			context.setPointer(context.pointer + 1);
+	public void execute(ParserStateMachine machine) throws Throwable {
+		if (machine.c == '/' && machine.getRemainingAt(0) == '/') {
+			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
+			machine.setPointer(machine.pointer + 1);
 		} else {
-			context.reportSyntaxViolation("Slash should be followed by another slash.");
-			context.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
-			context.setPointer(context.pointer - 1);
+			machine.reportSyntaxViolation("Slash should be followed by another slash.");
+			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
+			machine.setPointer(machine.pointer - 1);
 		}
 	}
 }

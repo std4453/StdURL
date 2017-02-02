@@ -7,21 +7,21 @@ import org.stdurl.helpers.SchemeHelper;
  */
 public class RelativeSlashState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
 		// 1
-		if (c == '/' || (SchemeHelper.isSpecialScheme(context.scheme) && c == '\\')) {
+		if (c == '/' || (SchemeHelper.isSpecialScheme(machine.scheme) && c == '\\')) {
 			if (c == '\\')
-				context.reportSyntaxViolation("Backslash should be slash.");
-			context.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
+				machine.reportSyntaxViolation("Backslash should be slash.");
+			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
 		} else { // 2
-			context.setUsername(context.base.getUsernameInternal());
-			context.setPassword(context.base.getPasswordInternal());
-			context.setHost(context.base.getHostInternal());
-			context.setPort(context.base.getPortInternal());
-			context.setState(ParserStates.PATH_STATE);
-			context.setPointer(context.pointer - 1);
+			machine.setUsername(machine.base.getUsernameInternal());
+			machine.setPassword(machine.base.getPasswordInternal());
+			machine.setHost(machine.base.getHostInternal());
+			machine.setPort(machine.base.getPortInternal());
+			machine.setState(ParserStates.PATH_STATE);
+			machine.setPointer(machine.pointer - 1);
 		}
 	}
 }

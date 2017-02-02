@@ -5,9 +5,9 @@ package org.stdurl.parser;
  */
 public class HostState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
+	public void execute(ParserStateMachine machine) throws Throwable {
 		// Host state is the very same to #hostname-state
 		IParserState hostnameState = ParserStates.getState(ParserStates.HOSTNAME_STATE);
-		hostnameState.execute(context);
+		hostnameState.execute(machine);
 	}
 }

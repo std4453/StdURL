@@ -8,18 +8,18 @@ import org.stdurl.helpers.ASCIIHelper;
  */
 public class SchemeStartState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
 		if (ASCIIHelper.isASCIIAlpha(c)) { // 1
-			context.buffer.appendCodePoint(ASCIIHelper.toLowerCase(c));
-			context.setState(ParserStates.SCHEME_STATE);
-		} else if (!ParserStates.hasState(context.stateOverride)) { // 2
-			context.setState(ParserStates.NO_SCHEME_STATE);
-			context.setPointer(context.pointer - 1);
+			machine.buffer.appendCodePoint(ASCIIHelper.toLowerCase(c));
+			machine.setState(ParserStates.SCHEME_STATE);
+		} else if (!ParserStates.hasState(machine.stateOverride)) { // 2
+			machine.setState(ParserStates.NO_SCHEME_STATE);
+			machine.setPointer(machine.pointer - 1);
 		} else {
-			context.reportSyntaxViolation("State override does nothing.");
-			context.setReturnValue(URL.failure);
+			machine.reportSyntaxViolation("State override does nothing.");
+			machine.setReturnValue(URL.failure);
 		}
 	}
 }

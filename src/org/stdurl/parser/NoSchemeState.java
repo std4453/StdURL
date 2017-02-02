@@ -7,25 +7,25 @@ import org.stdurl.URL;
  */
 public class NoSchemeState implements IParserState {
 	@Override
-	public void execute(ParserContext context) throws Throwable {
-		int c = context.c;
+	public void execute(ParserStateMachine machine) throws Throwable {
+		int c = machine.c;
 
-		if (context.base == null || (context.base.getCannotBeABaseURLInternal() && c != '#')) { // 1
-			context.reportSyntaxViolation("Must have a base URL or begin with '#'.");
-			context.returnValue = URL.failure;
-		} else if (context.base.getCannotBeABaseURLInternal() && c == '#') { // 2
-			context.setScheme(context.base.getSchemeInternal());
-			context.path.addAll(context.base.getPathInternal());
-			context.setQuery(context.base.getQueryInternal());
-			context.setFragment("");
-			context.setCannotBeABaseURL(true);
-			context.setState(ParserStates.FRAGMENT_STATE);
-		} else if (!"file".equalsIgnoreCase(context.scheme)) { // 3
-			context.setState(ParserStates.RELATIVE_STATE);
-			context.setPointer(context.pointer - 1);
+		if (machine.base == null || (machine.base.getCannotBeABaseURLInternal() && c != '#')) { // 1
+			machine.reportSyntaxViolation("Must have a base URL or begin with '#'.");
+			machine.returnValue = URL.failure;
+		} else if (machine.base.getCannotBeABaseURLInternal() && c == '#') { // 2
+			machine.setScheme(machine.base.getSchemeInternal());
+			machine.path.addAll(machine.base.getPathInternal());
+			machine.setQuery(machine.base.getQueryInternal());
+			machine.setFragment("");
+			machine.setCannotBeABaseURL(true);
+			machine.setState(ParserStates.FRAGMENT_STATE);
+		} else if (!"file".equalsIgnoreCase(machine.scheme)) { // 3
+			machine.setState(ParserStates.RELATIVE_STATE);
+			machine.setPointer(machine.pointer - 1);
 		} else { // 4
-			context.setState(ParserStates.FILE_STATE);
-			context.setPointer(context.pointer - 1);
+			machine.setState(ParserStates.FILE_STATE);
+			machine.setPointer(machine.pointer - 1);
 		}
 	}
 }

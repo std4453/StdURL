@@ -2,7 +2,6 @@ package org.stdurl.parser;
 
 import org.stdurl.URL;
 import org.stdurl.helpers.ASCIIHelper;
-import org.stdurl.helpers.EncodingHelper;
 import org.stdurl.helpers.StringHelper;
 
 import java.nio.charset.Charset;
@@ -23,6 +22,18 @@ public class BasicURLParser {
 	 */
 	public static URL parse(String input) {
 		return parse(input, null, ParserStates.NO_SUCH_STATE);
+	}
+
+	/**
+	 * Simplest URL parser, parse the given {@code input} without any special arguments.
+	 *
+	 * @param input
+	 * 		The input string.
+	 *
+	 * @return The parsed {@link URL} object;
+	 */
+	public static URL parse(String input, SyntaxViolationListener listener) {
+		return parse(input, null, null, listener, null, ParserStates.NO_SUCH_STATE);
 	}
 
 	/**
@@ -108,11 +119,9 @@ public class BasicURLParser {
 			SyntaxViolationListener listener,
 			URL url, int stateOverride) {
 		int[] codePoints = StringHelper.toCodePoints(input);
-		int length;
 
-		if (url == null) {
-			// 1.1 is omitted, because we construct the URL object after the whole parsing
-			// has terminated and every URL part has been retrieved ( and encoded )
+		if (url == null) { // 1
+			// 1.1: omitted, see ParserStateMachine
 
 			// 1.2 + 1.3
 			int[] trimmedCodePoints = trimC0ControlOrSpace(codePoints);
@@ -123,130 +132,36 @@ public class BasicURLParser {
 			codePoints = trimmedCodePoints;
 		}
 
-		length = codePoints.length;
+		// 2 + 3
+		int[] removedCodePoints = removeTabOrNewLine(codePoints);
+		if (removedCodePoints != codePoints)
+			ParserStateMachine.reportSyntaxViolation(listener, input,
+					ParserStates.NO_SUCH_STATE, -1,
+					"U+0009, U+000A or U+000D unexpected.");
+		codePoints = removedCodePoints;
 
-		// 2
-		boolean tabOrNewLineFound = false;
-		for (int i = 0; i < length; ++i)
-			if (ASCIIHelper.isASCIITabOrNewLine(codePoints[i])) {
-				tabOrNewLineFound = true;
-				ParserContext.reportSyntaxViolation(listener, input,
-						ParserStates.NO_SUCH_STATE, i,
-						"Tab or new line found.");
-			}
-
-		// 3
-		if (tabOrNewLineFound) {
-			int j = 0;
-			for (int i = 0; i < length; ++i)
-				if (!ASCIIHelper.isASCIITabOrNewLine(codePoints[i])) {
-					codePoints[j] = codePoints[i];
-					++j;
-				}
-			length = j;
-		}
-
-		// 4
 		int initialState = ParserStates.hasState(stateOverride) ?
-				stateOverride : ParserStates.SCHEME_START_STATE;
+				stateOverride : ParserStates.SCHEME_START_STATE; // 4
 
 		// 5: omitted
 
-		// 6 + 7
 		if (url != null && encodingOverride == null)
-			encodingOverride = url.getQueryEncodingInternal();
-		Charset encoding = encodingOverride == null ?
-				EncodingHelper.UTF8 : encodingOverride;
+			encodingOverride = url.getQueryEncodingInternal(); // 6 + 7
 
-		// 7 + 8 + 9 + 10: omitted, initial values set by means of passing
-		// parameters to setters in ParserContext
-
-		// 11
-
-		// construct context
-		ParserContext context = new ParserContext();
-
-		context.setState(initialState);
-		context.setEncoding(encoding);
-
-		context.setListener(listener);
-
-		context.setInput(input);
-		context.setStateOverride(stateOverride);
-		context.setCodePoints(codePoints);
-		context.setLength(length);
-		context.setBase(base);
-		context.setPointer(0);
-		context.setAtFlag(false);
-		context.setBracketsFlag(false);
-		context.setPasswordTokenSeenFlag(false);
-		context.setBuffer(new StringBuffer());
-
-		if (url != null) {
-			context.setScheme(url.getSchemeInternal());
-			context.setUsername(url.getUsernameInternal());
-			context.setPassword(url.getPasswordInternal());
-			context.setHost(url.getHostInternal());
-			context.setPort(url.getPortInternal());
-			context.path.addAll(url.getPathInternal());
-			context.setQuery(url.getQueryInternal());
-			context.setFragment(url.getFragmentInternal());
-			context.setCannotBeABaseURL(url.getCannotBeABaseURLInternal());
-		}
-
-		context.setReturnValue(null);
-		context.setTerminateRequested(false);
-
-		// run state machine
-		int c = context.codePoints[context.pointer];
-		while (true) {
-			context.setC(c);
-			int stateCode = context.state;
-			IParserState state = ParserStates.getState(stateCode);
-			try {
-				state.execute(context);
-			} catch (Throwable t) {
-				System.err.printf("Exception caught while execution state %d. \n",
-						stateCode);
-				t.printStackTrace();
-
-				return URL.failure;
-			}
-
-			// early terminations
-			URL returnValue = context.returnValue;
-			if (returnValue != null) return returnValue;
-			if (context.terminateRequested) break;
-
-			if (context.pointer == context.length) break;
-			context.setPointer(context.pointer + 1);
-			c = context.pointer == context.length ? 0 :
-					context.codePoints[context.pointer]; // use 0 to represent EOF
-		}
-
-		// 12
-
-		// we construct the URL instance here when all the URL parts are ready.
-		if (url != null) {
-			url.setInternal(context.scheme, context.username, context.password,
-					context.host, context.port, context.path,
-					context.query, context.fragment,
-					context.cannotBeABaseURL, null, encodingOverride);
-			return url;
-		} else {
-			return URL.createInternal(context.scheme, context.username, context.password,
-					context.host, context.port, context.path,
-					context.query, context.fragment,
-					context.cannotBeABaseURL, null, encodingOverride);
-		}
+		// 8 + 9 + 10 + 11 + 12: see ParserStateMachine
+		ParserStateMachine machine = new ParserStateMachine(codePoints, base,
+				encodingOverride, url, stateOverride, listener);
+		machine.run(initialState);
+		return machine.returnValue;
 	}
 
-	@SuppressWarnings("StatementWithEmptyBody")
 	private static int[] trimC0ControlOrSpace(int[] codePoints) {
 		int len = codePoints.length;
 
 		int head = 0, tail = len - 1;
+		//noinspection StatementWithEmptyBody
 		for (; head < len && ASCIIHelper.isC0ControlOrSpace(codePoints[head]); ++head) ;
+		//noinspection StatementWithEmptyBody
 		for (; tail >= 0 && ASCIIHelper.isC0ControlOrSpace(codePoints[tail]); --tail) ;
 
 		if (tail < head)
@@ -255,6 +170,21 @@ public class BasicURLParser {
 		int newLen = tail + 1 - head;
 		int[] newCodePoints = new int[newLen];
 		System.arraycopy(codePoints, head, newCodePoints, 0, newLen);
+		return newCodePoints;
+	}
+
+	private static int[] removeTabOrNewLine(int[] codePoints) {
+		int len = codePoints.length;
+		int len1 = 0;
+		for (int codePoint1 : codePoints)
+			if (!ASCIIHelper.isASCIITabOrNewLine(codePoint1)) ++len1;
+		if (len1 == len) return codePoints;
+
+		int[] newCodePoints = new int[len1];
+		int j = 0;
+		for (int codePoint : codePoints)
+			if (!ASCIIHelper.isASCIITabOrNewLine(codePoint))
+				newCodePoints[j++] = codePoint;
 		return newCodePoints;
 	}
 }
