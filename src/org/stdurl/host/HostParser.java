@@ -136,8 +136,8 @@ public class HostParser {
 
 		if (codePoints[pointer] == ':') { // 5
 			if (getRemaining(codePoints, pointer, 0) != ':') {
-				listener.onSyntaxViolation(String.format(hostParserSVMT,
-						input, pointer, "Ipv6 address should begin with \"::\"."));
+				reportSyntaxViolation(listener, input, pointer,
+						"Ipv6 address should begin with \"::\".");
 				return null;
 			}
 			pointer += 2;
@@ -152,15 +152,15 @@ public class HostParser {
 			int c = codePoints[pointer];
 
 			if (piecePointer == 8) { // 6.1
-				listener.onSyntaxViolation(String.format(hostParserSVMT,
-						input, pointer, "Ipv6 address has at most 8 pieces."));
+				reportSyntaxViolation(listener, input, pointer,
+						"Ipv6 address has at most 8 pieces.");
 				return null;
 			}
 
 			if (c == ':') { // 6.2
 				if (compressPointer != -1) {
-					listener.onSyntaxViolation(String.format(hostParserSVMT,
-							input, pointer, "Compress pointer not null."));
+					reportSyntaxViolation(listener, input, pointer,
+							"Compress pointer not null.");
 					return null;
 				}
 				++pointer;
@@ -181,8 +181,8 @@ public class HostParser {
 			switch (c) { // 6.5
 				case '.':
 					if (l == 0) {
-						listener.onSyntaxViolation(String.format(hostParserSVMT,
-								input, pointer, "Length can't be 0."));
+						reportSyntaxViolation(listener, input, pointer,
+								"Length can't be 0.");
 						return null;
 					}
 					pointer -= l;
@@ -191,20 +191,19 @@ public class HostParser {
 				case ':':
 					++pointer;
 					if (pointer == length) {
-						listener.onSyntaxViolation(String.format(hostParserSVMT,
-								input, pointer - 1, "':' can't be the last character."));
+						reportSyntaxViolation(listener, input, pointer - 1,
+								"':' can't be the last character.");
 						return null;
 					}
 					break;
 				case 0:
 					break;
 				default:
-					listener.onSyntaxViolation(String.format(hostParserSVMT,
-							input, pointer,
+					reportSyntaxViolation(listener, input, pointer,
 							new StringBuilder("Character '")
 									.appendCodePoint(c)
 									.append("' unexpected.")
-									.toString()));
+									.toString());
 					return null;
 			}
 
@@ -218,8 +217,7 @@ public class HostParser {
 
 		if (!jumpToFinale) {
 			if (piecePointer > 6) // 8
-				listener.onSyntaxViolation(String.format(hostParserSVMT,
-						input, pointer, "Unknown error."));
+				reportSyntaxViolation(listener, input, pointer, "Unknown error.");
 
 			int numbersSeen = 0; // 9
 			while (pointer != length) { // 10
@@ -232,15 +230,15 @@ public class HostParser {
 						++pointer;
 						c = pointer == length ? 0 : codePoints[pointer];
 					} else {
-						listener.onSyntaxViolation(String.format(hostParserSVMT,
-								input, pointer, "numbersSeen greater than 4."));
+						reportSyntaxViolation(listener, input, pointer,
+								"numbersSeen greater than 4.");
 						return null;
 					}
 				}
 
 				if (!ASCIIHelper.isASCIIDigit(c)) { // 10.3
-					listener.onSyntaxViolation(String.format(hostParserSVMT,
-							input, pointer, "ASCII digit expected."));
+					reportSyntaxViolation(listener, input, pointer,
+							"ASCII digit expected.");
 					return null;
 				}
 
@@ -249,8 +247,8 @@ public class HostParser {
 					int number = RadixHelper.fromHex(c);
 					if (value == -1) value = number;
 					else if (value == 0) {
-						listener.onSyntaxViolation(String.format(hostParserSVMT,
-								input, pointer, "First digit should not be 0."));
+						reportSyntaxViolation(listener, input, pointer,
+								"First digit should not be 0.");
 						return null;
 					} else value = value * 10 + number;
 
@@ -258,9 +256,8 @@ public class HostParser {
 					c = pointer == length ? 0 : codePoints[pointer];
 
 					if (value > 255)
-						listener.onSyntaxViolation(String.format(hostParserSVMT,
-								input, pointer, new StringBuilder("Value ")
-										.append(value).append(" too big.")));
+						reportSyntaxViolation(listener, input, pointer,
+								"Value " + value + " too big.");
 				}
 
 				// 10.5
@@ -269,8 +266,7 @@ public class HostParser {
 				if (numbersSeen == 2 || numbersSeen == 4) ++piecePointer; // 10.7
 
 				if (pointer == length && numbersSeen != 4) { // 10.8
-					listener.onSyntaxViolation(String.format(hostParserSVMT,
-							input, pointer, "Pieces not enough."));
+					reportSyntaxViolation(listener, input, pointer, "Pieces not enough.");
 					return null;
 				}
 			}
@@ -288,8 +284,7 @@ public class HostParser {
 			}
 		} else { // 12
 			if (piecePointer != 8)
-				listener.onSyntaxViolation(String.format(hostParserSVMT,
-						input, pointer, "Pieces not enough."));
+				reportSyntaxViolation(listener, input, pointer, "Pieces not enough.");
 			return null;
 		}
 
@@ -327,21 +322,20 @@ public class HostParser {
 		}
 
 		if (syntaxViolationFlag) // 7
-			listener.onSyntaxViolation(String.format(hostParserSVMT,
-					input, -1, "Error parsing ipv4 number."));
+			reportSyntaxViolation(listener, input, -1, "Error parsing ipv4 number.");
 
 		// 8 + 9
 		int numbersSize = numbers.size();
 		for (int i = 0; i < numbersSize; ++i)
 			if (numbers.get(i) > 255) {
-				listener.onSyntaxViolation(String.format(hostParserSVMT,
-						input, -1, "Ipv4 number greater than 255."));
+				reportSyntaxViolation(listener, input, -1,
+						"Ipv4 number greater than 255.");
 				if (i != numbersSize - 1) return null;
 			}
 
 		if (numbers.get(numbersSize - 1) >= (1L << ((5 - numbersSize) << 3))) { // 10
-			listener.onSyntaxViolation(String.format(hostParserSVMT,
-					input, -1, "Last part of ipv4 address too big."));
+			reportSyntaxViolation(listener, input, -1,
+					"Last part of ipv4 address too big.");
 			return null;
 		}
 
@@ -404,5 +398,12 @@ public class HostParser {
 		index += pointer + 1;
 		if (index < 0 || index >= codePoints.length) return 0;
 		return codePoints[index];
+	}
+
+	private static void reportSyntaxViolation(
+			SyntaxViolationListener listener,
+			String input, int index, String msg) {
+		if (listener != null)
+			listener.onSyntaxViolation(String.format(hostParserSVMT, input, index, msg));
 	}
 }
