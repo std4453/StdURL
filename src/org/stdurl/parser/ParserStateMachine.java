@@ -50,7 +50,6 @@ public class ParserStateMachine {
 		this.pointer = pointer;
 	}
 
-	@SuppressWarnings("SameParameterValue")
 	public void setAtFlag(boolean atFlag) {
 		this.atFlag = atFlag;
 	}
@@ -59,7 +58,6 @@ public class ParserStateMachine {
 		this.bracketsFlag = bracketsFlag;
 	}
 
-	@SuppressWarnings("SameParameterValue")
 	public void setPasswordTokenSeenFlag(boolean passwordTokenSeenFlag) {
 		this.passwordTokenSeenFlag = passwordTokenSeenFlag;
 	}
@@ -138,7 +136,6 @@ public class ParserStateMachine {
 		this.port = port;
 	}
 
-	@SuppressWarnings("SameParameterValue")
 	public void setCannotBeABaseURL(boolean cannotBeABaseURL) {
 		this.cannotBeABaseURL = cannotBeABaseURL;
 	}

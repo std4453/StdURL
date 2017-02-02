@@ -87,7 +87,6 @@ public class IDNA {
 	 * @return The converted {@link String}.
 	 * @see <a href="http://www.unicode.org/reports/tr46/#ToUnicode">#ToUnicode</a>
 	 */
-	@SuppressWarnings("SameParameterValue")
 	public static String toUnicode(int[] domainName, int flag) {
 		return processing(domainName, flag);
 	}

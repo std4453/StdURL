@@ -71,7 +71,6 @@ public class HostParser {
 	 *
 	 * @return The parsed host.
 	 */
-	@SuppressWarnings("SameParameterValue")
 	public static Host parseHost(
 			String input, boolean unicodeFlag, SyntaxViolationListener listener) {
 		int[] codePoints = StringHelper.toCodePoints(input);
@@ -120,7 +119,6 @@ public class HostParser {
 	/**
 	 * @see <a href="https://url.spec.whatwg.org/#concept-ipv6-parser">#concept-ipv6-parser</a>
 	 */
-	@SuppressWarnings("ConstantConditions")
 	private static Ipv6Address parseIpv6(String input, SyntaxViolationListener listener) {
 		// 1
 		char[] pieces = new char[8];
@@ -213,6 +211,9 @@ public class HostParser {
 
 		boolean jumpToFinale = false;
 
+		// IntelliJ meets a bug here, pointer == length can be false if the while loop
+		// exits at a break statement. (like line 188)
+		//noinspection ConstantConditions
 		if (!jumpToIpv4 && pointer == length) jumpToFinale = true; // 7
 
 		if (!jumpToFinale) {
@@ -393,7 +394,6 @@ public class HostParser {
 		}
 	}
 
-	@SuppressWarnings("SameParameterValue")
 	private static int getRemaining(int[] codePoints, int pointer, int index) {
 		index += pointer + 1;
 		if (index < 0 || index >= codePoints.length) return 0;

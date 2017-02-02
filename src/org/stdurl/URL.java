@@ -540,9 +540,7 @@ public class URL {
 	/**
 	 * @see <a href="https://url.spec.whatwg.org/#url-equivalence">#url-equivalence</a>
 	 */
-	public static boolean equals(
-			URL url1, URL url2,
-			@SuppressWarnings("SameParameterValue") boolean excludeFragmentsFlag) {
+	public static boolean equals(URL url1, URL url2, boolean excludeFragmentsFlag) {
 		if (url1 == url2) return true;
 		if (url1 == null || url2 == null)
 			return false;
