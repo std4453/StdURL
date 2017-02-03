@@ -2,7 +2,7 @@ package org.stdurl.host;
 
 import org.stdurl.helpers.*;
 import org.stdurl.idna.IDNA;
-import org.stdurl.parser.SyntaxViolationListener;
+import org.stdurl.parser.ISyntaxViolationListener;
 import org.stdurl.percent.PercentDecoder;
 import org.stdurl.percent.PercentEncoder;
 import org.stdurl.percent.SimpleEncodeSet;
@@ -42,7 +42,7 @@ public class HostParser {
 	 * @return The parsed host.
 	 */
 	public static Host parseURLHost(
-			String input, boolean isSpecial, SyntaxViolationListener listener) {
+			String input, boolean isSpecial, ISyntaxViolationListener listener) {
 		if (isSpecial)
 			return parseHost(input, listener);
 		if (CodePointHelper.containsForbiddenHostCodePoint(input)) {
@@ -69,7 +69,7 @@ public class HostParser {
 	 * @return The parsed host.
 	 */
 	public static Host parseHost(
-			String input, boolean unicodeFlag, SyntaxViolationListener listener) {
+			String input, boolean unicodeFlag, ISyntaxViolationListener listener) {
 		int[] codePoints = StringHelper.toCodePoints(input);
 		int length = codePoints.length;
 
@@ -109,14 +109,15 @@ public class HostParser {
 	 *
 	 * @return The parsed host.
 	 */
-	public static Host parseHost(String input, SyntaxViolationListener listener) {
+	public static Host parseHost(String input, ISyntaxViolationListener listener) {
 		return parseHost(input, false, listener);
 	}
 
 	/**
 	 * @see <a href="https://url.spec.whatwg.org/#concept-ipv6-parser">#concept-ipv6-parser</a>
 	 */
-	private static Ipv6Address parseIpv6(String input, SyntaxViolationListener listener) {
+	private static Ipv6Address parseIpv6(
+			String input, ISyntaxViolationListener listener) {
 		// 1
 		char[] pieces = new char[8];
 		Arrays.fill(pieces, (char) 0);
@@ -292,7 +293,7 @@ public class HostParser {
 	/**
 	 * @see <a href="https://url.spec.whatwg.org/#concept-ipv4-parser">#concept-ipv4-parser</a>
 	 */
-	private static Host parseIpv4(String input, SyntaxViolationListener listener) {
+	private static Host parseIpv4(String input, ISyntaxViolationListener listener) {
 		boolean syntaxViolationFlag = false; // 1
 		String[] parts = input.split(Pattern.quote(".")); // 2
 
@@ -398,7 +399,7 @@ public class HostParser {
 	}
 
 	private static void reportSyntaxViolation(
-			SyntaxViolationListener listener,
+			ISyntaxViolationListener listener,
 			String input, int index, String msg) {
 		if (listener != null)
 			listener.onSyntaxViolation(String.format(hostParserSVMT, input, index, msg));

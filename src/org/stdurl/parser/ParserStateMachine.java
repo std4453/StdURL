@@ -15,7 +15,7 @@ import java.util.List;
  * class, and provided with internal control flags and methods, it can be used by test
  * classes of each separate parser states ( which cannot be achieved only by calling
  * {@linkplain BasicURLParser#parse(String, URL, Charset, URL, int,
- * SyntaxViolationListener) BasicURLParser.parse()} ).<br>
+ * ISyntaxViolationListener) BasicURLParser.parse()} ).<br>
  */
 public class ParserStateMachine {
 	// ========== STATE MACHINE CONTEXT ==========
@@ -28,7 +28,7 @@ public class ParserStateMachine {
 	public Charset encoding; // changed only in query state, almost final
 	public URL url;
 	public final int stateOverride;
-	public final SyntaxViolationListener listener;
+	public final ISyntaxViolationListener listener;
 
 	public void setEncoding(Charset encoding) {
 		this.encoding = encoding;
@@ -84,7 +84,7 @@ public class ParserStateMachine {
 
 	public ParserStateMachine(
 			int[] inputCodePoints, URL base, Charset encoding, URL url, int stateOverride,
-			SyntaxViolationListener listener) {
+			ISyntaxViolationListener listener) {
 		this.codePoints = inputCodePoints;
 		this.length = inputCodePoints.length;
 		this.input = StringHelper.toString(this.codePoints);
@@ -246,7 +246,7 @@ public class ParserStateMachine {
 	}
 
 	public static void reportSyntaxViolation(
-			SyntaxViolationListener listener,
+			ISyntaxViolationListener listener,
 			String input,
 			int state,
 			int pointer,

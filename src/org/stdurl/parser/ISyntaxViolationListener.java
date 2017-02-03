@@ -3,7 +3,7 @@ package org.stdurl.parser;
 /**
  *
  */
-public interface SyntaxViolationListener {
+public interface ISyntaxViolationListener {
 	/**
 	 * Called when the an operation reports a <a href="https://url.spec.whatwg.org/#syntax-violation">syntax
 	 * violation</a>.

@@ -32,7 +32,7 @@ public class BasicURLParser {
 	 *
 	 * @return The parsed {@link URL} object;
 	 */
-	public static URL parse(String input, SyntaxViolationListener listener) {
+	public static URL parse(String input, ISyntaxViolationListener listener) {
 		return parse(input, null, listener);
 	}
 
@@ -79,7 +79,7 @@ public class BasicURLParser {
 	 *
 	 * @return The parsed {@link URL}.
 	 */
-	public static URL parse(String input, URL base, SyntaxViolationListener listener) {
+	public static URL parse(String input, URL base, ISyntaxViolationListener listener) {
 		return parse(input, base, null, listener);
 	}
 
@@ -116,7 +116,7 @@ public class BasicURLParser {
 	 */
 	public static URL parse(
 			String input, URL base, Charset encodingOverride,
-			SyntaxViolationListener listener) {
+			ISyntaxViolationListener listener) {
 		return parse(input, base, encodingOverride, null,
 				ParserStates.NO_SUCH_STATE, listener);
 	}
@@ -150,7 +150,7 @@ public class BasicURLParser {
 	 */
 	public static URL parse(
 			String input, URL base, Charset encodingOverride,
-			URL url, int stateOverride, SyntaxViolationListener listener) {
+			URL url, int stateOverride, ISyntaxViolationListener listener) {
 		int[] codePoints = StringHelper.toCodePoints(input);
 
 		if (url == null) { // 1
