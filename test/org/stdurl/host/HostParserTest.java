@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 public class HostParserTest {
 	@Test
 	public void testParseIpv4() {
-		int ipv4 = Host.TYPE_IPV4_ADDRESS;
+		HostType ipv4 = HostType.IPV4;
 		RecordedSyntaxViolationListener listener = new RecordedSyntaxViolationListener();
 
 		// standard ipv4
@@ -53,12 +53,12 @@ public class HostParserTest {
 		assertEquals(4, listener.getOccurrences());
 	}
 
-	private static void test(String host, int type, String result) {
+	private static void test(String host, HostType type, String result) {
 		test(host, type, result, null);
 	}
 
 	private static void test(
-			String host, int type, String result,
+			String host, HostType type, String result,
 			ISyntaxViolationListener listener) {
 		Host parsedHost = HostParser.parseHost(host, false, listener);
 		String msg = "Input = " + host;

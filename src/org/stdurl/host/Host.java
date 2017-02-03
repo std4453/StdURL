@@ -17,18 +17,12 @@ package org.stdurl.host;
  * @see <a href="https://url.spec.whatwg.org/#hosts-%28domains-and-ip-addresses%29">#hosts-(domains-and-ip-addresses)</a>
  */
 public abstract class Host {
-	public static final int TYPE_UNKNOWN = 0;
-	public static final int TYPE_DOMAIN = 1;
-	public static final int TYPE_IPV4_ADDRESS = 2;
-	public static final int TYPE_IPV6_ADDRESS = 3;
-	public static final int TYPE_OPAQUE_HOST = 4;
-
-	public int getType() {
-		return this.isDomain() ? TYPE_DOMAIN :
-				this.isIpv4Address() ? TYPE_IPV4_ADDRESS :
-						this.isIpv6Address() ? TYPE_IPV6_ADDRESS :
-								this.isOpaqueHost() ? TYPE_OPAQUE_HOST :
-										TYPE_UNKNOWN;
+	public HostType getType() {
+		return this.isDomain() ? HostType.DOMAIN :
+				this.isIpv4Address() ? HostType.IPV4 :
+						this.isIpv6Address() ? HostType.IPV6 :
+								this.isOpaqueHost() ? HostType.OPAQUE_HOST :
+										HostType.UNKNOWN;
 	}
 
 	/**
@@ -69,5 +63,19 @@ public abstract class Host {
 
 	public OpaqueHost toOpaqueHost() {
 		return this.isOpaqueHost() ? (OpaqueHost) this : null;
+	}
+
+	/**
+	 * Converts this {@link Host} instance to a string. Note that the return value of
+	 * {@code toString()} may be different from the return value of invoking {@link
+	 * #serialize()}. It also contains the actual type of this instance.<br>
+	 * Thus, {@code toString()} should be invoked only to obtain a description
+	 * {@link String} for human-readable display.
+	 *
+	 * @return The converted {@link String}.
+	 */
+	@Override
+	public String toString() {
+		return this.getType().name + ": " + this.serialize();
 	}
 }
