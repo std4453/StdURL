@@ -158,7 +158,7 @@ public class BasicURLParser {
 			// 1.2 + 1.3
 			int[] trimmedCodePoints = trimC0ControlOrSpace(codePoints);
 			if (trimmedCodePoints != codePoints)
-				ParserContext.reportSyntaxViolation(listener, input,
+				ParserStateMachine.reportSyntaxViolation(listener, input,
 						ParserStates.NO_SUCH_STATE, -1,
 						"Leading or Trailing C0 control or space found.");
 			codePoints = trimmedCodePoints;
