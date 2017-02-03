@@ -170,7 +170,7 @@ public class HostParser {
 			int v = 0, l = 0; // 6.3
 
 			while (l < 4 && ASCIIHelper.isASCIIHexDigit(c)) { // 6.4
-				v = (v << 4) + RadixHelper.fromHex(c);
+				v = (v << 4) + RadixHelper.fromHexChar(c);
 				++pointer;
 				++l;
 				c = pointer == length ? 0 : codePoints[pointer];
@@ -245,7 +245,7 @@ public class HostParser {
 
 				while (pointer < length && ASCIIHelper.isASCIIDigit(c)) { // 10.4
 					// little hack, a decimal digit is always a hex digit
-					int number = RadixHelper.fromHex(c);
+					int number = RadixHelper.fromHexChar(c);
 					if (value == -1) value = number;
 					else if (value == 0) {
 						reportSyntaxViolation(listener, input, pointer,

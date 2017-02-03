@@ -30,7 +30,7 @@ public class PathHelper {
 	 */
 	public static void shortenPath(List<String> path, String scheme) {
 		if (path.size() == 0) return;
-		if ("file".equalsIgnoreCase(scheme) && path.size() == 1 &&
+		if (SchemeHelper.SCHEME_FILE.equalsIgnoreCase(scheme) && path.size() == 1 &&
 				FileSchemeHelper.isWindowsDriveLetter(path.get(0))) return;
 		path.remove(path.size() - 1);
 	}

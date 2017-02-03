@@ -31,8 +31,8 @@ public class PercentDecoder {
 				if (!ASCIIHelper.isASCIIHexDigit(d1) || !ASCIIHelper.isASCIIHexDigit(d2))
 					output.write(b);
 				else {
-					int bytePoint = (RadixHelper.fromHex(d1) << 4) |
-							RadixHelper.fromHex(d2);
+					int bytePoint = (RadixHelper.fromHexChar(d1) << 4) |
+							RadixHelper.fromHexChar(d2);
 					output.write(bytePoint);
 					i += 2;
 				}
