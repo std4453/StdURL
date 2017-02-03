@@ -54,4 +54,15 @@ public class Ipv6Address extends Host {
 
 		return output.toString();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof Ipv6Address)) return false;
+		char[] p1 = this.pieces, p2 = ((Ipv6Address) obj).pieces;
+		if (p1 == p2) return true;
+		if (p1 == null || p2 == null) return false;
+		if (p1.length != p2.length) return false;
+		for (int i = 0; i < p1.length; ++i) if (p1[i] != p2[i]) return false;
+		return true;
+	}
 }

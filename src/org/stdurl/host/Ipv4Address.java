@@ -23,4 +23,10 @@ public class Ipv4Address extends Host {
 		output.insert(0, String.valueOf(n & 0xFF));
 		return output.toString();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return !(obj == null || !(obj instanceof Ipv4Address)) &&
+				this.address == ((Ipv4Address) obj).address;
+	}
 }
