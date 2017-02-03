@@ -11,7 +11,7 @@ public class RecordedSyntaxViolationListener implements ISyntaxViolationListener
 
 	@Override
 	public void onSyntaxViolation(String message) {
-		++occurrences;
+		++this.occurrences;
 	}
 
 	/**
@@ -22,7 +22,7 @@ public class RecordedSyntaxViolationListener implements ISyntaxViolationListener
 	}
 
 	public int getOccurrences() {
-		return occurrences;
+		return this.occurrences;
 	}
 
 	public boolean occurred() {
