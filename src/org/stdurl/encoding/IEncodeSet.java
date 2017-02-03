@@ -1,7 +1,10 @@
 package org.stdurl.encoding;
 
+import java.nio.charset.Charset;
+
 /**
- * Interface for all encode sets defined by the URL Standard.
+ * Interface for all encode sets defined by the URL Standard. Used in {@linkplain
+ * PercentEncoder#encode(int[], Charset, IEncodeSet) PercentEncoder.encode()}.
  */
 public interface IEncodeSet {
 	/**
