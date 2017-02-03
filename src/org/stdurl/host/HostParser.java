@@ -90,8 +90,9 @@ public class HostParser {
 		if (asciiDomain == null) return null; // 4
 
 		if (CodePointHelper.containsForbiddenHostCodePoint(asciiDomain)) { // 5
-			listener.onSyntaxViolation(String.format(hostParserSVMT,
-					input, -1, "Input string contains forbidden host code point."));
+			reportSyntaxViolation(listener, input, -1,
+					"Input string contains forbidden host code point.");
+			return null;
 		}
 
 		Host ipv4Host = parseIpv4(asciiDomain, listener); // 6
@@ -171,7 +172,8 @@ public class HostParser {
 				v = (v << 4) + RadixHelper.fromHexChar(c);
 				++pointer;
 				++l;
-				c = pointer == length ? 0 : codePoints[pointer];
+				if (pointer == length) c = 0;
+				else c = codePoints[pointer];
 			}
 
 			switch (c) { // 6.5
@@ -254,9 +256,11 @@ public class HostParser {
 					++pointer;
 					c = pointer == length ? 0 : codePoints[pointer];
 
-					if (value > 255)
+					if (value > 255) {
 						reportSyntaxViolation(listener, input, pointer,
 								"Value " + value + " too big.");
+						return null;
+					}
 				}
 
 				// 10.5
@@ -281,11 +285,11 @@ public class HostParser {
 				--piecePointer;
 				--swaps;
 			}
-		} else { // 12
-			if (piecePointer != 8)
+		} else // 12
+			if (piecePointer != 8) {
 				reportSyntaxViolation(listener, input, pointer, "Pieces not enough.");
-			return null;
-		}
+				return null;
+			}
 
 		return new Ipv6Address(pieces);
 	}

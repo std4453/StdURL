@@ -39,12 +39,13 @@ public class Ipv6Address extends Host {
 		int compressPointer = longest > 1 ? first : -1;
 
 		for (int i = 0; i < this.pieces.length; ++i) {
-			// FIXME: the compression part maybe bugful, standard being unclear
 			if (compressPointer == i) {
-				output.append("::");
+				output.append(i == 0 ? "::" : ":");
 				//noinspection StatementWithEmptyBody
-				for (++i; this.pieces[i] == 0; ++i) ;
+				for (++i; i < this.pieces.length && this.pieces[i] == 0; ++i) ;
 			}
+			if (i == this.pieces.length) break;
+
 			char piece = this.pieces[i];
 			int intPiece = ((int) piece) & 0xFFFF;
 			output.append(Integer.toHexString(intPiece));

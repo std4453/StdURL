@@ -65,7 +65,7 @@ public class ASCIIHelper {
 	 * @see <a href="https://infra.spec.whatwg.org/#ascii-lower-hex-digit">#ascii-lower-hex-digit</a>
 	 */
 	public static boolean isASCIILowerHexDigit(int codePoint) {
-		return isASCIIDigit(codePoint) || codePoint >= '\u0061' && codePoint <= '\u0046';
+		return isASCIIDigit(codePoint) || codePoint >= '\u0061' && codePoint <= '\u0066';
 	}
 
 	/**

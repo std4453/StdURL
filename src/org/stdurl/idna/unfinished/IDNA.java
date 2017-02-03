@@ -53,7 +53,7 @@ public class IDNA {
 		String processed = processing(domainName, flags & (~VERIFY_DNS_LENGTH_FLAG));
 		if (processed == null) return null;
 
-		String[] labels = processed.split(Pattern.quote("."));
+		String[] labels = processed.split(Pattern.quote("."), -1);
 		String[] convertedLabels = new String[labels.length];
 		for (int i = 0; i < labels.length; ++i) {
 			String label = labels[i];
@@ -158,7 +158,7 @@ public class IDNA {
 		String normalized = Normalizer.normalize(output.toString(), Normalizer.Form.NFC);
 
 		// 3. Break
-		String[] labels = normalized.split(Pattern.quote("."));
+		String[] labels = normalized.split(Pattern.quote("."), -1);
 
 		// 4. Convert / Validate
 		for (int i = 0; i < labels.length; ++i) {
