@@ -252,4 +252,44 @@ public class HostParserTest {
 			assertEquals(msg, result, parsedHost.serialize());
 		}
 	}
+
+	@Test
+	public void testURLParse() {
+		// parsing of special hosts are tested in testParse***(), therefore only a small
+		// example is tested here.
+		Host parsed = HostParser.parseURLHost("www.example.com", true, null);
+		assertNotEquals(null, parsed);
+		assert parsed != null; // should always be true
+		assertEquals(HostType.DOMAIN, parsed.getType());
+		assertEquals("www.example.com", parsed.serialize());
+
+		RecordedSyntaxViolationListener listener = new RecordedSyntaxViolationListener();
+
+		// forbidden host code points
+		assertEquals(HostParser.parseURLHost("\u0000host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("\u0009host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("\nhost", false, listener), null);
+		assertEquals(HostParser.parseURLHost("\rhost", false, listener), null);
+		assertEquals(HostParser.parseURLHost(" host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("#host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("%host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("/host", false, listener), null);
+		assertEquals(HostParser.parseURLHost(":host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("?host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("@host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("\\host", false, listener), null);
+		assertEquals(HostParser.parseURLHost("host[", false, listener), null);
+		assertEquals(HostParser.parseURLHost("host]", false, listener), null);
+		assertEquals(14, listener.getOccurrences());
+
+		// percent-encoding is tested in PercentEncoderTest, therefore only a small
+		// example is tested here.
+		parsed = HostParser.parseURLHost("Happy-new-year!-\u65b0\u5e74\u5feb\u4e50",
+				false, null);
+		assertNotEquals(null, parsed);
+		assert parsed != null; // should always be true
+		assertEquals(HostType.OPAQUE_HOST, parsed.getType());
+		assertEquals("Happy-new-year!-%E6%96%B0%E5%B9%B4%E5%BF%AB%E4%B9%90",
+				parsed.serialize());
+	}
 }
