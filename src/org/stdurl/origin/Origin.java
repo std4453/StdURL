@@ -71,8 +71,10 @@ public class Origin {
 	public String unicodeSerialize() {
 		if (this.isOpaqueOrigin()) return "null";
 
-		Host unicodeHost = this.host == null || !this.host.isDomain() ? this.host :
-				new Domain(IDNA.domainToUnicode(this.host.toDomain().getDomain()));
+		Host unicodeHost = this.host;
+		if (unicodeHost != null && unicodeHost.isDomain())
+			unicodeHost = new Domain(
+					IDNA.domainToUnicode(unicodeHost.toDomain().getDomain()));
 		Origin unicodeOrigin = new Origin(this.scheme, unicodeHost, this.port, null);
 		return unicodeOrigin.asciiSerialize();
 	}
@@ -96,7 +98,8 @@ public class Origin {
 	public static boolean areSameOrigin(Origin origin1, Origin origin2) {
 		return origin1 == origin2 || !(origin1 == null || origin2 == null) &&
 				!(origin1.isOpaqueOrigin() || origin2.isOpaqueOrigin()) &&
-				Objects.equals(origin1.scheme, origin2.scheme) &&
+				Objects.equals(origin1.scheme.toLowerCase(),
+						origin2.scheme.toLowerCase()) &&
 				Objects.equals(origin1.host, origin2.host) &&
 				origin1.port == origin2.port;
 	}
@@ -110,7 +113,8 @@ public class Origin {
 		// which the IDE interfered in and inlined all the assertions :-)
 		return origin1 == origin2 || !(origin1 == null || origin2 == null) &&
 				!(origin1.isOpaqueOrigin() || origin2.isOpaqueOrigin()) &&
-				(Objects.equals(origin1.scheme, origin2.scheme) &&
+				(Objects.equals(origin1.scheme.toLowerCase(),
+						origin2.scheme.toLowerCase()) &&
 						(origin1.domain != null && origin2.domain != null) &&
 						Objects.equals(origin1.domain, origin2.domain) ||
 						areSameOrigin(origin1, origin2) &&
