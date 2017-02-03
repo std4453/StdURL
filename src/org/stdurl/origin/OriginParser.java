@@ -32,10 +32,13 @@ public class OriginParser {
 			case SchemeHelper.SCHEME_HTTPS:
 			case SchemeHelper.SCHEME_WS:
 			case SchemeHelper.SCHEME_WSS:
+				// a small variation: use default port for the special scheme if
+				// url.getPortInternal() returns -1
+				int port = url.getPortInternal();
+				if (port == -1) port = SchemeHelper.getDefaultPort(scheme);
 				return new Origin(url.getSchemeInternal(),
 						url.getHostInternal(),
-						url.getPortInternal(),
-						null);
+						port, null);
 			case SchemeHelper.SCHEME_FILE:
 				// It is pretty frustrating to see written in the standard:
 				//   Unfortunate as it is, this is left as an exercise to the reader.
