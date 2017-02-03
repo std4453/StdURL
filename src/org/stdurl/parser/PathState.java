@@ -1,8 +1,8 @@
 package org.stdurl.parser;
 
-import org.stdurl.encoding.DefaultEncodeSet;
-import org.stdurl.encoding.PercentEncoder;
 import org.stdurl.helpers.*;
+import org.stdurl.percent.DefaultEncodeSet;
+import org.stdurl.percent.PercentEncoder;
 
 /**
  * @see <a href="https://url.spec.whatwg.org/#path-state">#path-state</a>

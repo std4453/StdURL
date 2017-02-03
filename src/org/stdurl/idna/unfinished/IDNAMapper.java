@@ -1,4 +1,4 @@
-package org.stdurl.encoding.deprecated;
+package org.stdurl.idna.unfinished;
 
 /**
  *

@@ -1,10 +1,10 @@
 package org.stdurl.parser;
 
-import org.stdurl.encoding.PercentEncoder;
 import org.stdurl.helpers.ASCIIHelper;
 import org.stdurl.helpers.CodePointHelper;
 import org.stdurl.helpers.EncodingHelper;
 import org.stdurl.helpers.SchemeHelper;
+import org.stdurl.percent.PercentEncoder;
 
 /**
  * @see <a href="https://url.spec.whatwg.org/#query-state">#query-state</a>

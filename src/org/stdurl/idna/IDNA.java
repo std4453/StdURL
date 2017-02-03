@@ -1,4 +1,4 @@
-package org.stdurl.encoding;
+package org.stdurl.idna;
 
 import java.net.IDN;
 

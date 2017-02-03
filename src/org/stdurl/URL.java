@@ -1,7 +1,5 @@
 package org.stdurl;
 
-import org.stdurl.encoding.PercentEncoder;
-import org.stdurl.encoding.UserinfoEncodeSet;
 import org.stdurl.helpers.PathHelper;
 import org.stdurl.helpers.StringHelper;
 import org.stdurl.host.Host;
@@ -10,6 +8,8 @@ import org.stdurl.origin.Origin;
 import org.stdurl.origin.OriginParser;
 import org.stdurl.parser.BasicURLParser;
 import org.stdurl.parser.ParserStates;
+import org.stdurl.percent.PercentEncoder;
+import org.stdurl.percent.UserinfoEncodeSet;
 
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;

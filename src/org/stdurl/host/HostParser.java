@@ -1,14 +1,14 @@
 package org.stdurl.host;
 
-import org.stdurl.encoding.IDNA;
-import org.stdurl.encoding.PercentDecoder;
-import org.stdurl.encoding.PercentEncoder;
-import org.stdurl.encoding.SimpleEncodeSet;
 import org.stdurl.helpers.ASCIIHelper;
 import org.stdurl.helpers.EncodingHelper;
 import org.stdurl.helpers.RadixHelper;
 import org.stdurl.helpers.StringHelper;
+import org.stdurl.idna.IDNA;
 import org.stdurl.parser.SyntaxViolationListener;
+import org.stdurl.percent.PercentDecoder;
+import org.stdurl.percent.PercentEncoder;
+import org.stdurl.percent.SimpleEncodeSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;

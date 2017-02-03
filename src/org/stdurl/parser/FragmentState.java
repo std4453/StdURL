@@ -1,9 +1,9 @@
 package org.stdurl.parser;
 
-import org.stdurl.encoding.PercentEncoder;
-import org.stdurl.encoding.SimpleEncodeSet;
 import org.stdurl.helpers.ASCIIHelper;
 import org.stdurl.helpers.CodePointHelper;
+import org.stdurl.percent.PercentEncoder;
+import org.stdurl.percent.SimpleEncodeSet;
 
 /**
  * @see <a href="https://url.spec.whatwg.org/#fragment-state">#fragment-state</a>

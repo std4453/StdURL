@@ -1,4 +1,4 @@
-package org.stdurl.encoding;
+package org.stdurl.percent;
 
 /**
  * @see <a href="https://url.spec.whatwg.org/#userinfo-encode-set">#userinfo-encode-set</a>

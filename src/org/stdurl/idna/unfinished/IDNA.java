@@ -1,4 +1,4 @@
-package org.stdurl.encoding.deprecated;
+package org.stdurl.idna.unfinished;
 
 import org.stdurl.helpers.ASCIIHelper;
 import org.stdurl.helpers.StringHelper;
@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * @see <a href="https://url.spec.whatwg.org/#idna">#idna</a>
- * @deprecated Not yet finished, use {@link org.stdurl.encoding.IDNA} instead.
+ * @deprecated Not yet finished, use {@link org.stdurl.idna.IDNA} instead.
  */
 @Deprecated
 @SuppressWarnings("all")

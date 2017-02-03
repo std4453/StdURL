@@ -1,7 +1,7 @@
 package org.stdurl.urlencoded;
 
-import org.stdurl.encoding.PercentDecoder;
 import org.stdurl.helpers.EncodingHelper;
+import org.stdurl.percent.PercentDecoder;
 
 import java.nio.charset.Charset;
 import java.util.AbstractMap;

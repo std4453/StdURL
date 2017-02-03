@@ -1,8 +1,8 @@
 package org.stdurl.origin;
 
-import org.stdurl.encoding.IDNA;
 import org.stdurl.host.Domain;
 import org.stdurl.host.Host;
+import org.stdurl.idna.IDNA;
 
 import java.util.Objects;
 

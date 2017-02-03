@@ -1,4 +1,4 @@
-package org.stdurl.encoding;
+package org.stdurl.percent;
 
 import java.nio.charset.Charset;
 

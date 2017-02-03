@@ -1,10 +1,10 @@
 package org.stdurl.parser;
 
 import org.stdurl.URL;
-import org.stdurl.encoding.PercentEncoder;
-import org.stdurl.encoding.UserinfoEncodeSet;
 import org.stdurl.helpers.SchemeHelper;
 import org.stdurl.helpers.StringHelper;
+import org.stdurl.percent.PercentEncoder;
+import org.stdurl.percent.UserinfoEncodeSet;
 
 /**
  * @see <a href="https://url.spec.whatwg.org/#authority-state">#authority-state</a>

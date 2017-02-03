@@ -1,4 +1,4 @@
-package org.stdurl.encoding;
+package org.stdurl.percent;
 
 import org.stdurl.helpers.ASCIIHelper;
 import org.stdurl.helpers.RadixHelper;
