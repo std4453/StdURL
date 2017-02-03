@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  */
-public class URLTest {
+public class URLParserTest {
 	@Test
 	public void testStandard() {
 		this.test("https:example.org", null, "https://example.org/");
