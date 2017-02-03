@@ -3,7 +3,6 @@ package org.stdurl;
 import org.stdurl.helpers.PathHelper;
 import org.stdurl.helpers.StringHelper;
 import org.stdurl.host.Host;
-import org.stdurl.host.HostHelper;
 import org.stdurl.origin.Origin;
 import org.stdurl.origin.OriginParser;
 import org.stdurl.parser.BasicURLParser;
@@ -298,8 +297,8 @@ public class URL {
 	 */
 	public String getHost() {
 		if (this.host == null) return "";
-		if (this.port == -1) return HostHelper.serialize(this.host);
-		return HostHelper.serialize(this.host) + ':' + this.port;
+		if (this.port == -1) return this.host.serialize();
+		return this.host.serialize() + ':' + this.port;
 	}
 
 	/**
@@ -315,7 +314,7 @@ public class URL {
 	 */
 	public String getHostname() {
 		if (this.host == null) return "";
-		return HostHelper.serialize(this.host);
+		return this.host.serialize();
 	}
 
 	/**
@@ -519,7 +518,7 @@ public class URL {
 					output.append(':').append(this.password);
 				output.append('@');
 			}
-			output.append(HostHelper.serialize(this.host));
+			output.append(this.host.serialize());
 			if (this.port != -1)
 				output.append(':').append(this.port);
 		} else if ("file".equalsIgnoreCase(this.scheme))

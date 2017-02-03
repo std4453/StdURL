@@ -31,6 +31,12 @@ public abstract class Host {
 										TYPE_UNKNOWN;
 	}
 
+	/**
+	 * The respective implementation of #concept-host-serializer in the URL Standard.
+	 *
+	 * @return The serialized host string.
+	 * @see <a href="https://url.spec.whatwg.org/#concept-host-serializer">#concept-host-serializer</a>
+	 */
 	public abstract String serialize();
 
 	public boolean isDomain() {

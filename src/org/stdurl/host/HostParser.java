@@ -1,9 +1,6 @@
 package org.stdurl.host;
 
-import org.stdurl.helpers.ASCIIHelper;
-import org.stdurl.helpers.EncodingHelper;
-import org.stdurl.helpers.RadixHelper;
-import org.stdurl.helpers.StringHelper;
+import org.stdurl.helpers.*;
 import org.stdurl.idna.IDNA;
 import org.stdurl.parser.SyntaxViolationListener;
 import org.stdurl.percent.PercentDecoder;
@@ -48,7 +45,7 @@ public class HostParser {
 			String input, boolean isSpecial, SyntaxViolationListener listener) {
 		if (isSpecial)
 			return parseHost(input, listener);
-		if (HostHelper.containsForbiddenHostCodePoint(input)) {
+		if (CodePointHelper.containsForbiddenHostCodePoint(input)) {
 			listener.onSyntaxViolation(String.format(hostParserSVMT,
 					input, -1, "Input string contains forbidden host code point."));
 			return null;
@@ -92,7 +89,7 @@ public class HostParser {
 		String asciiDomain = IDNA.domainToASCII(domain); // 3
 		if (asciiDomain == null) return null; // 4
 
-		if (HostHelper.containsForbiddenHostCodePoint(asciiDomain)) { // 5
+		if (CodePointHelper.containsForbiddenHostCodePoint(asciiDomain)) { // 5
 			listener.onSyntaxViolation(String.format(hostParserSVMT,
 					input, -1, "Input string contains forbidden host code point."));
 		}
