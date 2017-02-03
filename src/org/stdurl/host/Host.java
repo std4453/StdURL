@@ -17,11 +17,11 @@ package org.stdurl.host;
  * @see <a href="https://url.spec.whatwg.org/#hosts-%28domains-and-ip-addresses%29">#hosts-(domains-and-ip-addresses)</a>
  */
 public abstract class Host {
-	private static final int TYPE_UNKNOWN = 0;
-	private static final int TYPE_DOMAIN = 1;
-	private static final int TYPE_IPV4_ADDRESS = 2;
-	private static final int TYPE_IPV6_ADDRESS = 3;
-	private static final int TYPE_OPAQUE_HOST = 4;
+	public static final int TYPE_UNKNOWN = 0;
+	public static final int TYPE_DOMAIN = 1;
+	public static final int TYPE_IPV4_ADDRESS = 2;
+	public static final int TYPE_IPV6_ADDRESS = 3;
+	public static final int TYPE_OPAQUE_HOST = 4;
 
 	public int getType() {
 		return this.isDomain() ? TYPE_DOMAIN :
