@@ -21,7 +21,7 @@ public class BasicURLParser {
 	 * @return The parsed {@link URL} object;
 	 */
 	public static URL parse(String input) {
-		return parse(input, SimpleParserListener.instance);
+		return parse(input, SimpleSyntaxViolationListener.instance);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class BasicURLParser {
 	 */
 	public static URL parse(String input, URL url, int stateOverride) {
 		return parse(input, null, null, url,
-				stateOverride, SimpleParserListener.instance);
+				stateOverride, SimpleSyntaxViolationListener.instance);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class BasicURLParser {
 	 * @return The parsed {@link URL}.
 	 */
 	public static URL parse(String input, URL base) {
-		return parse(input, base, SimpleParserListener.instance);
+		return parse(input, base, SimpleSyntaxViolationListener.instance);
 	}
 
 	/**
@@ -96,7 +96,8 @@ public class BasicURLParser {
 	 * @return The parsed {@link URL}.
 	 */
 	public static URL parse(String input, URL base, Charset encodingOverride) {
-		return parse(input, base, encodingOverride, SimpleParserListener.instance);
+		return parse(input, base, encodingOverride,
+				SimpleSyntaxViolationListener.instance);
 	}
 
 	/**
