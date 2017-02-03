@@ -14,13 +14,13 @@ public class Ipv4Address extends Host {
 	public String serialize() {
 		StringBuilder output = new StringBuilder();
 		int n = this.address;
-		output.append(n & 0xFF).append('.');
+		output.insert(0, String.valueOf(n & 0xFF)).insert(0, '.');
 		n >>= 8;
-		output.append(n & 0xFF).append('.');
+		output.insert(0, String.valueOf(n & 0xFF)).insert(0, '.');
 		n >>= 8;
-		output.append(n & 0xFF).append('.');
+		output.insert(0, String.valueOf(n & 0xFF)).insert(0, '.');
 		n >>= 8;
-		output.append(n & 0xFF);
+		output.insert(0, String.valueOf(n & 0xFF));
 		return output.toString();
 	}
 }

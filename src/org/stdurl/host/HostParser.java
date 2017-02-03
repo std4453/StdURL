@@ -295,7 +295,7 @@ public class HostParser {
 	 */
 	private static Host parseIpv4(String input, ISyntaxViolationListener listener) {
 		boolean syntaxViolationFlag = false; // 1
-		String[] parts = input.split(Pattern.quote(".")); // 2
+		String[] parts = input.split(Pattern.quote("."), -1); // 2
 
 		// 3
 		int partsLength = parts.length;
@@ -311,12 +311,14 @@ public class HostParser {
 
 		List<Integer> numbers = new ArrayList<>(); // 5
 
-		for (String part : parts) { // 6
+		for (int i = 0; i < partsLength; ++i) { // 6
+			String part = parts[i];
 			if (part.isEmpty()) return new OpaqueHost(input);
 			Object[] ret = parseIpv4Number(part, syntaxViolationFlag);
+			if (ret[0] == null) return new OpaqueHost(input);
 			int n = (Integer) ret[0];
-			syntaxViolationFlag = (Boolean) ret[1];
-			if (n == -1) return new OpaqueHost(input);
+			syntaxViolationFlag |= (Boolean) ret[1];
+
 			numbers.add(n);
 		}
 
@@ -325,12 +327,14 @@ public class HostParser {
 
 		// 8 + 9
 		int numbersSize = numbers.size();
-		for (int i = 0; i < numbersSize; ++i)
-			if (numbers.get(i) > 255) {
+		for (int i = 0; i < numbersSize; ++i) {
+			int number = numbers.get(i);
+			if (number < 0 || number > 255) { // number should be positive
 				reportSyntaxViolation(listener, input, -1,
 						"Ipv4 number greater than 255.");
 				if (i != numbersSize - 1) return null;
 			}
+		}
 
 		if (numbers.get(numbersSize - 1) >= (1L << ((5 - numbersSize) << 3))) { // 10
 			reportSyntaxViolation(listener, input, -1,
@@ -362,7 +366,8 @@ public class HostParser {
 		int length = codePoints.length;
 
 		// 2
-		if (length >= 2 && codePoints[0] == '0' && "xX".indexOf(codePoints[1]) != -1) {
+		if (length >= 2 && codePoints[0] == '0' && "xX".indexOf(
+				codePoints[1]) != -1) {
 			syntaxViolationFlag = true;
 			int[] newCodePoints = new int[length - 2];
 			System.arraycopy(codePoints, 2, newCodePoints, 0, length - 2);
@@ -380,15 +385,15 @@ public class HostParser {
 
 		if (length == 0) return new Object[]{0, syntaxViolationFlag};
 		for (int codePoint : codePoints)
-			if (!RadixHelper.isRadixNDigit(codePoint, R))
-				return new Object[]{-1, syntaxViolationFlag};
+			if (!RadixHelper.isRadixNDigit(codePoint, R)) // leading +/- is forbidden
+				return new Object[]{null, syntaxViolationFlag};
 
 		input = StringHelper.toString(codePoints);
 		try {
-			int n = Integer.parseInt(input, R);
+			int n = Integer.parseUnsignedInt(input, R);
 			return new Object[]{n, syntaxViolationFlag};
 		} catch (NumberFormatException e) {
-			return new Object[]{-1, syntaxViolationFlag};
+			return new Object[]{null, syntaxViolationFlag};
 		}
 	}
 
