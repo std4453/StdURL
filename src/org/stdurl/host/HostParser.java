@@ -366,8 +366,7 @@ public class HostParser {
 		int length = codePoints.length;
 
 		// 2
-		if (length >= 2 && codePoints[0] == '0' && "xX".indexOf(
-				codePoints[1]) != -1) {
+		if (length >= 2 && codePoints[0] == '0' && "xX".indexOf(codePoints[1]) != -1) {
 			syntaxViolationFlag = true;
 			int[] newCodePoints = new int[length - 2];
 			System.arraycopy(codePoints, 2, newCodePoints, 0, length - 2);

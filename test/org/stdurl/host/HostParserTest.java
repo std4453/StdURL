@@ -51,6 +51,37 @@ public class HostParserTest {
 		test("1.1.65536", ipv4, null, listener);
 		test("1.16777216", ipv4, null, listener);
 		assertEquals(4, listener.getOccurrences());
+
+		// base 16 / 8
+		listener.clear();
+		test(String.format("0x%x.0%o.0x%x.0%o",
+				part1, part2, part3, part4), ipv4, result, listener);
+		test(String.format("0%o.0x%x.0%o.0x%x",
+				part1, part2, part3, part4), ipv4, result, listener);
+		assertEquals(2, listener.getOccurrences());
+	}
+
+	@Test
+	public void testParseDomain() {
+		HostType domain = HostType.DOMAIN;
+
+		// more than 4 items
+		test("12.34.56.78.90", domain, "12.34.56.78.90");
+		test("1.2.3.4.5.6", domain, "1.2.3.4.5.6");
+
+		// value greater than 2^32 - 1
+		test("4294967296", domain, "4294967296");
+		test("0x100000000", domain, "0x100000000");
+		test("040000000000", domain, "040000000000");
+
+		// out-ouf-radix digits
+		test("123ABC", domain, "123ABC");
+		test("0x123Gg", domain, "0x123Gg");
+		test("0123456789", domain, "0123456789");
+
+		// standard domains
+		test("www.example.com", domain, "www.example.com");
+		test("a.b.c.d.example.com", domain, "a.b.c.d.example.com");
 	}
 
 	private static void test(String host, HostType type, String result) {
