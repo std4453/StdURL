@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Implement a standard-defined URL host parser & host parser.
+ * Implement a standard-defined URL host parser &amp; host parser.
  *
  * @see <a href="https://url.spec.whatwg.org/#concept-url-host-parser">#conecpt-url-host-parser</a>
  * @see <a href="https://url.spec.whatwg.org/#concept-host-parser">#concept-host-parser</a>

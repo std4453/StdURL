@@ -32,7 +32,7 @@ public class RadixHelper {
 	 * @param c
 	 * 		The character to check.
 	 * @param n
-	 * 		The radix used. (2 <= n <= 16)
+	 * 		The radix used. ({@code 2 <= n <= 16})
 	 *
 	 * @return Whether character {@code c} is a valid digit of radix {@code n}.
 	 */

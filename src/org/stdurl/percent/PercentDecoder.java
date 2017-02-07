@@ -18,7 +18,7 @@ public class PercentDecoder {
 	 * 		The input byte array.
 	 *
 	 * @return The decoded byte array.
-	 * @see <a href=https://url.spec.whatwg.org/#percent-decode">#percent-decode</a>
+	 * @see <a href="https://url.spec.whatwg.org/#percent-decode">#percent-decode</a>
 	 */
 	public static byte[] decode(byte[] input) {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();

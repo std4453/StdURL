@@ -310,7 +310,7 @@ public class URL {
 	}
 
 	/**
-	 * @see <a href="https://url.spec.whatwg.org/#dom-url-hostname>#dom-url-hostname</a>
+	 * @see <a href="https://url.spec.whatwg.org/#dom-url-hostname">#dom-url-hostname</a>
 	 */
 	public String getHostname() {
 		if (this.host == null) return "";
@@ -318,7 +318,7 @@ public class URL {
 	}
 
 	/**
-	 * @see <a href="https://url.spec.whatwg.org/#dom-url-hostname>#dom-url-hostname</a>
+	 * @see <a href="https://url.spec.whatwg.org/#dom-url-hostname">#dom-url-hostname</a>
 	 */
 	public void setHostname(String hostname) {
 		if (this.cannotBeABaseURL) return;
