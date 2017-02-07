@@ -1,5 +1,6 @@
 apply plugin: 'idea'
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 sourceSets {
     main {
@@ -10,6 +11,18 @@ sourceSets {
     test {
         java {
             srcDir 'test'
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.std4453'
+            artifactId 'stdurl'
+            version '0.1-nightly'
+
+            from components.java
         }
     }
 }
