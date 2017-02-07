@@ -75,7 +75,7 @@ public class ParserStateMachine {
 	 * When non-null, indicates that the state machine should terminate and return the
 	 * value without calling {@link #afterLoop()}. (e.g. When an exception is thrown)
 	 */
-	private URL returnValue = null;
+	public URL returnValue = null;
 
 	public void returnDirectly(URL returnValue) {
 		this.returnValue = returnValue;
@@ -85,7 +85,7 @@ public class ParserStateMachine {
 	 * When {@code true}, indicates that the state machine should terminate after calling
 	 * {@link #afterLoop()}
 	 */
-	private boolean terminateRequested = false;
+	public boolean terminateRequested = false;
 
 	public void terminate() {
 		this.terminateRequested = true;
@@ -208,10 +208,7 @@ public class ParserStateMachine {
 	 */
 	public URL run(int initialState) {
 		this.beforeLoop(initialState);
-		for (
-				this.setPointer(0);
-				this.pointer <= this.length;
-				this.setPointer(this.pointer + 1)) {
+		for (; this.pointer <= this.length; this.setPointer(this.pointer + 1)) {
 			this.loop();
 			if (this.returnValue != null) return this.returnValue;
 			if (this.terminateRequested) break;
@@ -231,6 +228,7 @@ public class ParserStateMachine {
 		if (ParserStates.hasState(this.stateOverride))
 			initialState = this.stateOverride; // stateOverride overrides initialState
 		this.state = initialState;
+		this.setPointer(0);
 	}
 
 	/**
