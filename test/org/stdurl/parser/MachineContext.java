@@ -10,9 +10,8 @@ public class MachineContext {
 	public boolean atFlag, bracketsFlag, passwordTokenSeenFlag;
 
 	public MachineContext(
-			int state, int pointer, StringBuffer buffer, boolean atFlag,
-			boolean bracketsFlag,
-			boolean passwordTokenSeenFlag) {
+			int state, int pointer, StringBuffer buffer,
+			boolean atFlag, boolean bracketsFlag, boolean passwordTokenSeenFlag) {
 		this.state = state;
 		this.pointer = pointer;
 		this.buffer = buffer;
@@ -21,17 +20,5 @@ public class MachineContext {
 		this.atFlag = atFlag;
 		this.bracketsFlag = bracketsFlag;
 		this.passwordTokenSeenFlag = passwordTokenSeenFlag;
-	}
-
-	public MachineContext(int state, int pointer, StringBuffer buffer) {
-		this(state, pointer, buffer, false, false, false);
-	}
-
-	public MachineContext(int state, int pointer, String bufferStr) {
-		this(state, pointer, new StringBuffer(bufferStr));
-	}
-
-	public MachineContext(int state, int pointer) {
-		this(state, pointer, (StringBuffer) null);
 	}
 }

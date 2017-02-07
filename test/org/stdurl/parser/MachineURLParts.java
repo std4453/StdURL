@@ -35,9 +35,4 @@ public class MachineURLParts {
 		this.query = query;
 		this.fragment = fragment;
 	}
-
-	public MachineURLParts() {
-		// default values from URL.java
-		this("", "", "", null, -1, false, null, null, null);
-	}
 }

@@ -1,8 +1,6 @@
 package org.stdurl.parser;
 
 import org.stdurl.URL;
-import org.stdurl.helpers.EncodingHelper;
-import org.stdurl.helpers.StringHelper;
 
 import java.nio.charset.Charset;
 
@@ -21,18 +19,5 @@ public class MachineParameters {
 		this.base = base;
 		this.encoding = encoding;
 		this.stateOverride = stateOverride;
-	}
-
-	public MachineParameters(
-			String input, URL base, Charset encoding, int stateOverride) {
-		this(StringHelper.toCodePoints(input), base, encoding, stateOverride);
-	}
-
-	public MachineParameters(String input, int stateOverride) {
-		this(input, null, EncodingHelper.UTF8, stateOverride);
-	}
-
-	public MachineParameters(String input) {
-		this(input, ParserStates.NO_SUCH_STATE);
 	}
 }
