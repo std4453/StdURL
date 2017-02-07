@@ -173,19 +173,15 @@ public class BasicURLParser {
 					"U+0009, U+000A or U+000D unexpected.");
 		codePoints = removedCodePoints;
 
-		int initialState = ParserStates.hasState(stateOverride) ?
-				stateOverride : ParserStates.SCHEME_START_STATE; // 4
-
-		// 5: omitted
+		// 4 + 5: omitted
 
 		if (url != null && encodingOverride == null)
 			encodingOverride = url.getQueryEncodingInternal(); // 6 + 7
 
 		// 8 + 9 + 10 + 11 + 12: see ParserStateMachine
 		ParserStateMachine machine = new ParserStateMachine(codePoints, base,
-				encodingOverride, url, stateOverride, listener);
-		machine.run(initialState);
-		return machine.returnValue;
+				encodingOverride, stateOverride, listener, url);
+		return machine.run(ParserStates.SCHEME_START_STATE);
 	}
 
 	private static int[] trimC0ControlOrSpace(int[] codePoints) {

@@ -29,7 +29,7 @@ public class FileHostState implements IParserState {
 
 				// 1.3.2
 				if (host == null) {
-					machine.setReturnValue(URL.failure);
+					machine.returnDirectly(URL.failure);
 					return;
 				}
 

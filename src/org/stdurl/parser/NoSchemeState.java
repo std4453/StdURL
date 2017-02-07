@@ -12,7 +12,7 @@ public class NoSchemeState implements IParserState {
 
 		if (machine.base == null || (machine.base.getCannotBeABaseURLInternal() && c != '#')) { // 1
 			machine.reportSyntaxViolation("Must have a base URL or begin with '#'.");
-			machine.returnValue = URL.failure;
+			machine.returnDirectly(URL.failure);
 		} else if (machine.base.getCannotBeABaseURLInternal() && c == '#') { // 2
 			machine.setScheme(machine.base.getSchemeInternal());
 			machine.path.addAll(machine.base.getPathInternal());

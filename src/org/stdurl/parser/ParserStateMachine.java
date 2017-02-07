@@ -18,29 +18,31 @@ import java.util.List;
  * ISyntaxViolationListener) BasicURLParser.parse()} ).<br>
  */
 public class ParserStateMachine {
-	// ========== STATE MACHINE CONTEXT ==========
+	// ========== PARAMETERS ==========
 
-	// final parameters from BasicURLParser
-	public final int[] codePoints;
-	public final int length;
-	private final String input; // for syntax violation only, generated from codePoints
-	public final URL base;
+	public int[] codePoints;
+	public int length;
+	private String input; // for syntax violation only, generated from codePoints
+	public URL base;
 	public Charset encoding; // changed only in query state, almost final
 	public URL url;
-	public final int stateOverride;
-	public final ISyntaxViolationListener listener;
+	public int stateOverride;
+	public ISyntaxViolationListener listener;
 
 	public void setEncoding(Charset encoding) {
 		this.encoding = encoding;
 	}
 
-	// predominant state machine fields
+	// ========== MACHINE CONTEXT ==========
+
 	public int state;
 	public int c;
 	public int pointer;
-	public StringBuffer buffer;
+	public StringBuffer buffer = new StringBuffer();
 
-	public boolean atFlag, bracketsFlag, passwordTokenSeenFlag;
+	public boolean atFlag = false,
+			bracketsFlag = false,
+			passwordTokenSeenFlag = false;
 
 	public void setState(int state) {
 		this.state = state;
@@ -48,6 +50,11 @@ public class ParserStateMachine {
 
 	public void setPointer(int pointer) {
 		this.pointer = pointer;
+
+		// c is updated to be the character that this.pointer points to
+		// we use 0 to represent out-ouf-bounds pointer or EOF
+		if (this.pointer >= this.length || this.pointer < 0) this.c = 0;
+		else this.c = this.codePoints[this.pointer];
 	}
 
 	public void setAtFlag(boolean atFlag) {
@@ -62,59 +69,206 @@ public class ParserStateMachine {
 		this.passwordTokenSeenFlag = passwordTokenSeenFlag;
 	}
 
-	/**
-	 * If non-null indicates that an error as occurred while executing the state
-	 * machine algorithm, that the program should terminate without further operations
-	 * and returning directly the value of {@code returnValue};
-	 */
-	public URL returnValue = null;
-	/**
-	 * If true indicates that the state machine algorithm should terminate after
-	 * necessary termination actions.
-	 */
-	public boolean terminateRequested;
+	// ========== EARLY TERMINATION ==========
 
-	public void setReturnValue(URL returnValue) {
+	/**
+	 * When non-null, indicates that the state machine should terminate and return the
+	 * value without calling {@link #afterLoop()}. (e.g. When an exception is thrown)
+	 */
+	private URL returnValue = null;
+
+	public void returnDirectly(URL returnValue) {
 		this.returnValue = returnValue;
 	}
 
-	public void setTerminateRequested() {
+	/**
+	 * When {@code true}, indicates that the state machine should terminate after calling
+	 * {@link #afterLoop()}
+	 */
+	private boolean terminateRequested = false;
+
+	public void terminate() {
 		this.terminateRequested = true;
 	}
 
+	// ========== MACHINE LOGIC ==========
+
+	/**
+	 * Standard constructor using the parameters specified in #concept-basic-parser of
+	 * the URL Standard.
+	 *
+	 * @param inputCodePoints
+	 * 		The input code points to process.
+	 * @param base
+	 * 		The base {@link URL}. (optional)
+	 * @param encoding
+	 * 		The overriding encoding to use. (optional)
+	 * @param stateOverride
+	 * 		The {@code stateOverride} parameter.
+	 * @param listener
+	 * 		The listener of the parser state machine. (optional)
+	 * @param url
+	 * 		The given {@link URL}. (optional)
+	 */
 	public ParserStateMachine(
-			int[] inputCodePoints, URL base, Charset encoding, URL url, int stateOverride,
-			ISyntaxViolationListener listener) {
-		this.codePoints = inputCodePoints;
-		this.length = inputCodePoints.length;
-		this.input = StringHelper.toString(this.codePoints);
-		this.base = base;
-		this.encoding = encoding == null ? EncodingHelper.UTF8 : encoding;
-		this.url = url == null ? URL.createInternal() : this.url;
-		this.stateOverride = stateOverride;
-		this.listener = listener;
+			int[] inputCodePoints, URL base, Charset encoding, int stateOverride,
+			ISyntaxViolationListener listener, URL url) {
+		this(inputCodePoints, base, encoding, stateOverride, listener);
 
-		this.pointer = 0;
-		this.buffer = new StringBuffer();
-		this.atFlag = this.bracketsFlag = this.passwordTokenSeenFlag = false;
-
-		this.setAllURLFields();
+		this.url = url;
+		if (url == null) this.url = URL.createInternal();
+		this.setURLFields(this.url.getSchemeInternal(),
+				this.url.getUsernameInternal(),
+				this.url.getPasswordInternal(),
+				this.url.getHostInternal(),
+				this.url.getPortInternal(),
+				this.url.getCannotBeABaseURLInternal(),
+				this.url.getPathInternal(),
+				this.url.getQueryInternal(),
+				this.url.getFragmentInternal());
 	}
 
+	/**
+	 * Set the fields in this instance that represent the respective URL fields.
+	 *
+	 * @param scheme
+	 * 		The URL scheme.
+	 * @param username
+	 * 		The username of the URL.
+	 * @param password
+	 * 		The password of the URL.
+	 * @param host
+	 * 		The host of the URL.
+	 * @param port
+	 * 		The port of the URL.
+	 * @param cannotBeABaseURL
+	 * 		Whether the URL can be a base URL.
+	 * @param path
+	 * 		The path of the URL.
+	 * @param query
+	 * 		The query string of the URL.
+	 * @param fragment
+	 * 		The fragment string of the URL.
+	 */
+	protected void setURLFields(
+			String scheme, String username, String password, Host host, int port,
+			boolean cannotBeABaseURL, List<String> path, String query, String fragment) {
+		this.scheme = scheme;
+		this.username = username;
+		this.password = password;
+		this.host = host;
+		this.port = port;
+		this.cannotBeABaseURL = cannotBeABaseURL;
+		if (this.path == null) this.path = new ArrayList<>();
+		this.path.addAll(path);
+		this.query = query;
+		this.fragment = fragment;
+	}
+
+	/**
+	 * Internal constructor, used by classes that extends {@link ParserStateMachine}
+	 * and do not want to use the standard constructor.<br>
+	 * The parameters {@code codePoints}, {@code base}, {@code encoding}, {@code
+	 * stateOverride} and {@code listener} are always required in an instance of
+	 * {@link ParserStateMachine}, all public constructors of
+	 * {@link ParserStateMachine} and classes that extend {@link ParserStateMachine}
+	 * must provide these while construction.
+	 *
+	 * @param codePoints
+	 * 		The input code points to process.
+	 * @param base
+	 * 		The base {@link URL}. (optional)
+	 * @param encoding
+	 * 		The overriding encoding to use. (optional)
+	 * @param stateOverride
+	 * 		The {@code stateOverride} parameter.
+	 * @param listener
+	 * 		The listener of the parser state machine. (optional)
+	 */
+	protected ParserStateMachine(
+			int[] codePoints, URL base, Charset encoding, int stateOverride,
+			ISyntaxViolationListener listener) {
+		this.codePoints = codePoints;
+		this.length = codePoints.length;
+		this.input = StringHelper.toString(this.codePoints);
+
+		this.base = base;
+		this.encoding = encoding == null ? EncodingHelper.UTF8 : encoding;
+		this.stateOverride = stateOverride;
+		this.listener = listener;
+	}
+
+	/**
+	 * Runs the {@link ParserStateMachine}. {@link #returnValue} will represent the
+	 * final result after the this method returns.
+	 *
+	 * @param initialState
+	 * 		The initial state of the {@link ParserStateMachine}, will be overridden if
+	 * 		{@code stateOverride} is set.
+	 */
+	public URL run(int initialState) {
+		this.beforeLoop(initialState);
+		for (
+				this.setPointer(0);
+				this.pointer <= this.length;
+				this.setPointer(this.pointer + 1)) {
+			this.loop();
+			if (this.returnValue != null) return this.returnValue;
+			if (this.terminateRequested) break;
+		}
+		this.afterLoop();
+		return this.url;
+	}
+
+	/**
+	 * Initialize the fields for the loop.
+	 *
+	 * @param initialState
+	 * 		The initial state of the {@link ParserStateMachine}, will be overridden if
+	 * 		{@code stateOverride} is set.
+	 */
+	protected void beforeLoop(int initialState) {
+		if (ParserStates.hasState(this.stateOverride))
+			initialState = this.stateOverride; // stateOverride overrides initialState
+		this.state = initialState;
+	}
+
+	/**
+	 * Execute the main loop of the state machine once.
+	 */
+	protected void loop() {
+		int stateCode = this.state;
+		try {
+			ParserStates.getState(stateCode).execute(this);
+		} catch (Throwable t) {
+			System.err.println("Exception caught while executing state " + stateCode);
+			t.printStackTrace();
+			this.returnValue = URL.failure;
+		}
+	}
+
+	/**
+	 * Called after the loop.
+	 */
+	protected void afterLoop() {
+		this.url.setInternal(this.scheme, this.username, this.password,
+				this.host, this.port,
+				this.path, this.query, this.fragment,
+				this.cannotBeABaseURL, null,
+				this.encoding == EncodingHelper.UTF8 ? null : this.encoding);
+	}
 
 	// ========== URL PARTS ==========
-	// @see URL
-	// default values are identical to those in URL.java
 
-	public String scheme = "";
-	public String username = "";
-	public String password = "";
-	public Host host = null;
-	public int port = -1;
-	public List<String> path = new ArrayList<>();
-	public String query = null;
-	public String fragment = null;
-	public boolean cannotBeABaseURL = false;
+	public String scheme;
+	public String username;
+	public String password;
+	public Host host;
+	public int port;
+	public List<String> path;
+	public String query;
+	public String fragment;
+	public boolean cannotBeABaseURL;
 
 	public void setScheme(String scheme) {
 		this.scheme = scheme;
@@ -152,62 +306,7 @@ public class ParserStateMachine {
 		this.fragment = fragment;
 	}
 
-	private void setAllURLFields() {
-		this.scheme = this.url.getSchemeInternal();
-		this.username = this.url.getUsernameInternal();
-		this.password = this.url.getPasswordInternal();
-		this.host = this.url.getHostInternal();
-		this.port = this.url.getPortInternal();
-		this.cannotBeABaseURL = this.url.getCannotBeABaseURLInternal();
-		if (this.path == null) this.path = new ArrayList<>();
-		this.path.addAll(this.url.getPathInternal());
-		this.query = this.url.getQueryInternal();
-		this.fragment = this.url.getFragmentInternal();
-	}
-
-	private void constructFinalURL() {
-		this.url.setInternal(this.scheme, this.username, this.password,
-				this.host, this.port,
-				this.path, this.query, this.fragment,
-				this.cannotBeABaseURL, null,
-				this.encoding == EncodingHelper.UTF8 ? null : this.encoding);
-	}
-
-	// ========== STATE MACHINE EXECUTION ===========
-
-	public void run(int initialState) {
-		this.state = initialState;
-
-		this.c = this.codePoints[this.pointer];
-		while (true) {
-			int stateCode = this.state;
-			IParserState state = ParserStates.getState(stateCode);
-			try {
-				state.execute(this);
-			} catch (Throwable t) {
-				System.err.printf("Exception caught while execution state %d. \n",
-						stateCode);
-				t.printStackTrace();
-
-				this.returnValue = URL.failure;
-				return;
-			}
-
-			// early terminations
-			if (this.returnValue != null) return;
-			if (this.terminateRequested) break;
-
-			if (this.pointer == this.length) break;
-			++this.pointer;
-			if (this.pointer == this.length) this.c = 0; // use 0 to represent EOF
-			else this.c = this.codePoints[this.pointer];
-		}
-
-		this.constructFinalURL();
-		this.returnValue = this.url;
-	}
-
-	// ========== REMAINING ==========
+	// ========== ALTERNATIVE OF REMAINING ==========
 
 	/**
 	 * Gets the ith character of <i>remaining</i> (by definition).
@@ -232,7 +331,7 @@ public class ParserStateMachine {
 		return this.length - this.pointer - 1;
 	}
 
-	// ========== CONVENIENCE METHODS ==========
+	// ========== SYNTAX VIOLATION ==========
 
 	/**
 	 * SVMT stands for <i>Syntax Violation Message Template</i>.

@@ -41,7 +41,7 @@ public class AuthorityState implements IParserState {
 					(c == '\\' && SchemeHelper.isSpecialScheme(machine.scheme)))
 				if (machine.atFlag && machine.buffer.length() == 0) {
 					machine.reportSyntaxViolation("Empty host forbidden.");
-					machine.setReturnValue(URL.failure);
+					machine.returnDirectly(URL.failure);
 				} else {
 					machine.setPointer(machine.pointer - 1
 							- machine.buffer.codePointCount(0, machine.buffer.length()));

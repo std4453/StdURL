@@ -22,7 +22,7 @@ public class SchemeState implements IParserState {
 				String buf = machine.buffer.toString();
 				if (SchemeHelper.isSpecialScheme(machine.scheme) ^
 						SchemeHelper.isSpecialScheme(buf)) {
-					machine.setTerminateRequested();
+					machine.terminate();
 					return;
 				}
 			}
@@ -31,7 +31,7 @@ public class SchemeState implements IParserState {
 			machine.buffer.setLength(0); // 2.3
 
 			if (stateOverrideGiven) { // 2.4
-				machine.setTerminateRequested();
+				machine.terminate();
 				return;
 			}
 
@@ -61,7 +61,7 @@ public class SchemeState implements IParserState {
 			machine.setPointer(-1);
 		} else { //4
 			machine.reportSyntaxViolation("State override does nothing.");
-			machine.setReturnValue(URL.failure);
+			machine.returnDirectly(URL.failure);
 		}
 	}
 }

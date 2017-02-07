@@ -19,7 +19,7 @@ public class SchemeStartState implements IParserState {
 			machine.setPointer(machine.pointer - 1);
 		} else {
 			machine.reportSyntaxViolation("State override does nothing.");
-			machine.setReturnValue(URL.failure);
+			machine.returnDirectly(URL.failure);
 		}
 	}
 }

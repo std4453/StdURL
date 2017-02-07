@@ -21,7 +21,7 @@ public class PortState implements IParserState {
 				int port = Integer.parseInt(machine.buffer.toString()); // 2.1.1
 				if (port > 0xFFFF) { // 2.1.2
 					machine.reportSyntaxViolation("Port should be smaller than 32768.");
-					machine.setReturnValue(URL.failure);
+					machine.returnDirectly(URL.failure);
 					return;
 				}
 				machine.setPort(port == SchemeHelper.getDefaultPort(machine.scheme) ?
@@ -29,7 +29,7 @@ public class PortState implements IParserState {
 				machine.buffer.setLength(0); // 2.1.4
 			}
 			if (ParserStates.hasState(machine.stateOverride)) { // 2.2
-				machine.setTerminateRequested();
+				machine.terminate();
 				return;
 			}
 			// 2.3
@@ -39,7 +39,7 @@ public class PortState implements IParserState {
 			machine.reportSyntaxViolation(
 					new StringBuilder("Character '").
 							appendCodePoint(c).append("' unexpected.").toString());
-			machine.setReturnValue(URL.failure);
+			machine.returnDirectly(URL.failure);
 		}
 	}
 }

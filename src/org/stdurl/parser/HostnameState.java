@@ -16,7 +16,7 @@ public class HostnameState implements IParserState {
 		if (c == ':' && !machine.bracketsFlag) { //1
 			if (machine.buffer.length() == 0) { // 1.1
 				machine.reportSyntaxViolation("Empty host forbidden.");
-				machine.setReturnValue(URL.failure);
+				machine.returnDirectly(URL.failure);
 				return;
 			}
 
@@ -26,7 +26,7 @@ public class HostnameState implements IParserState {
 			Host host = HostParser.parseURLHost(input, isSpecial, machine.listener);
 
 			if (host == null) { // 1.3
-				machine.setReturnValue(URL.failure);
+				machine.returnDirectly(URL.failure);
 				return;
 			}
 
@@ -37,7 +37,7 @@ public class HostnameState implements IParserState {
 
 			// 1.5
 			if (machine.stateOverride == ParserStates.HOSTNAME_STATE)
-				machine.setTerminateRequested();
+				machine.terminate();
 		} else if (c == 0 || "/?#".indexOf(c) != -1 ||
 				(SchemeHelper.isSpecialScheme(machine.scheme) && c == '\\')) { // 2
 			machine.setPointer(machine.pointer - 1);
@@ -45,7 +45,7 @@ public class HostnameState implements IParserState {
 
 			if (isSpecial && machine.buffer.length() == 0) { // 2.1
 				machine.reportSyntaxViolation("Empty host forbidden.");
-				machine.setReturnValue(URL.failure);
+				machine.returnDirectly(URL.failure);
 				return;
 			}
 
@@ -54,7 +54,7 @@ public class HostnameState implements IParserState {
 			Host host = HostParser.parseURLHost(input, isSpecial, machine.listener);
 
 			if (host == null) { // 2.3
-				machine.setReturnValue(URL.failure);
+				machine.returnDirectly(URL.failure);
 				return;
 			}
 
@@ -64,7 +64,7 @@ public class HostnameState implements IParserState {
 			machine.setState(ParserStates.PATH_START_STATE);
 
 			if (ParserStates.hasState(machine.stateOverride)) // 2.5
-				machine.setTerminateRequested();
+				machine.terminate();
 		} else { // 3
 			if (c == '[') machine.setBracketsFlag(true);
 			else if (c == ']') machine.setBracketsFlag(false);
