@@ -104,7 +104,7 @@ public class ASCIIHelper {
 	}
 
 	public static int toLowerCase(int codePoint) {
-		return isASCIIUpperAlpha(codePoint) ? (codePoint - 0x20) : codePoint;
+		return isASCIIUpperAlpha(codePoint) ? (codePoint + 0x20) : codePoint;
 	}
 
 	public static boolean containsNonASCIICharacter(String str) {
