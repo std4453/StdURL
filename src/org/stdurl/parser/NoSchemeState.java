@@ -1,6 +1,7 @@
 package org.stdurl.parser;
 
 import org.stdurl.URL;
+import org.stdurl.helpers.SchemeHelper;
 
 /**
  * @see <a href="https://url.spec.whatwg.org/#no-scheme-state">#no-scheme-state</a>
@@ -20,7 +21,8 @@ public class NoSchemeState implements IParserState {
 			machine.setFragment("");
 			machine.setCannotBeABaseURL(true);
 			machine.setState(ParserStates.FRAGMENT_STATE);
-		} else if (!"file".equalsIgnoreCase(machine.scheme)) { // 3
+		} else if (!SchemeHelper.SCHEME_FILE.equalsIgnoreCase(
+				machine.base.getSchemeInternal())) { // 3
 			machine.setState(ParserStates.RELATIVE_STATE);
 			machine.setPointer(machine.pointer - 1);
 		} else { // 4

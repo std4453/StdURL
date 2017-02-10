@@ -23,8 +23,8 @@ public class CannotBeABaseURLPathState implements IParserState {
 			if (c != 0 && !CodePointHelper.isURLCodePoint(c) && c != '%')
 				machine.reportSyntaxViolation(new StringBuilder("Character '")
 						.appendCodePoint(c).append("' unexpected.").toString());
-			if (c == '%' && (!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(0))) ||
-					!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(1)))
+			if (c == '%' && (!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(0)) ||
+					!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(1))))
 				machine.reportSyntaxViolation("'%' is not followed by two hex digits.");
 
 			if (c != 0) {
