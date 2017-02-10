@@ -15,19 +15,19 @@ import java.util.List;
  * class, and provided with internal control flags and methods, it can be used by test
  * classes of each separate parser states ( which cannot be achieved only by calling
  * {@linkplain BasicURLParser#parse(String, URL, Charset, URL, int,
- * ISyntaxViolationListener) BasicURLParser.parse()} ).<br>
+ * IValidationErrorListener) BasicURLParser.parse()} ).<br>
  */
 public class ParserStateMachine {
 	// ========== PARAMETERS ==========
 
 	public int[] codePoints;
 	public int length;
-	private String input; // for syntax violation only, generated from codePoints
+	private String input; // for validation error only, generated from codePoints
 	public URL base;
 	public Charset encoding; // changed only in query state, almost final
 	public URL url;
 	public int stateOverride;
-	public ISyntaxViolationListener listener;
+	public IValidationErrorListener listener;
 
 	public void setEncoding(Charset encoding) {
 		this.encoding = encoding;
@@ -112,7 +112,7 @@ public class ParserStateMachine {
 	 */
 	public ParserStateMachine(
 			int[] inputCodePoints, URL base, Charset encoding, int stateOverride,
-			ISyntaxViolationListener listener, URL url) {
+			IValidationErrorListener listener, URL url) {
 		this(inputCodePoints, base, encoding, stateOverride, listener);
 
 		this.url = url;
@@ -187,7 +187,7 @@ public class ParserStateMachine {
 	 */
 	protected ParserStateMachine(
 			int[] codePoints, URL base, Charset encoding, int stateOverride,
-			ISyntaxViolationListener listener) {
+			IValidationErrorListener listener) {
 		this.codePoints = codePoints;
 		this.length = codePoints.length;
 		this.input = StringHelper.toString(this.codePoints);
@@ -329,27 +329,27 @@ public class ParserStateMachine {
 		return this.length - this.pointer - 1;
 	}
 
-	// ========== SYNTAX VIOLATION ==========
+	// ========== VALIDATION ERROR ==========
 
 	/**
-	 * SVMT stands for <i>Syntax Violation Message Template</i>.
+	 * VEMT stands for <i>Validation Error Message Template</i>.
 	 */
-	private static final String basicURLParserSVMT =
-			"Syntax violation while parsing URL: \"%s\"\n" +
-					"Current state: %d, Violation index: %d\nMessage: %s";
+	private static final String basicURLParserVEMT =
+			"Validation Error while parsing URL: \"%s\"\n" +
+					"Current state: %d, Error index: %d\nMessage: %s";
 
 	public void reportSyntaxViolation(String msg) {
 		reportSyntaxViolation(this.listener, this.input, this.state, this.pointer, msg);
 	}
 
 	public static void reportSyntaxViolation(
-			ISyntaxViolationListener listener,
+			IValidationErrorListener listener,
 			String input,
 			int state,
 			int pointer,
 			String msg) {
 		if (listener != null)
-			listener.onSyntaxViolation(String.format(basicURLParserSVMT,
+			listener.onSyntaxViolation(String.format(basicURLParserVEMT,
 					input, state, pointer, msg));
 	}
 }

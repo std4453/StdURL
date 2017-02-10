@@ -1,12 +1,12 @@
 package org.stdurl;
 
-import org.stdurl.parser.ISyntaxViolationListener;
+import org.stdurl.parser.IValidationErrorListener;
 
 /**
- * An implementation of {@link ISyntaxViolationListener} used in tests, records the number
- * of occurrences of syntax violations.
+ * An implementation of {@link IValidationErrorListener} used in tests, records the number
+ * of occurrences of validation errors.
  */
-public class RecordedSyntaxViolationListener implements ISyntaxViolationListener {
+public class RecordedValidationErrorListener implements IValidationErrorListener {
 	private int occurrences = 0;
 
 	@Override

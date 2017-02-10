@@ -2,7 +2,7 @@ package org.stdurl.host;
 
 import org.stdurl.helpers.*;
 import org.stdurl.idna.IDNA;
-import org.stdurl.parser.ISyntaxViolationListener;
+import org.stdurl.parser.IValidationErrorListener;
 import org.stdurl.percent.PercentDecoder;
 import org.stdurl.percent.PercentEncoder;
 import org.stdurl.percent.SimpleEncodeSet;
@@ -20,11 +20,11 @@ import java.util.regex.Pattern;
  */
 public class HostParser {
 	/**
-	 * SVMT stands for <i>Syntax Violation Message Template</i>.
+	 * VEMT stands for <i>Validation Error Message Template</i>.
 	 */
-	private static final String hostParserSVMT =
-			"Syntax violation while parsing Host: \"%s\"\n" +
-					"Violation index: %d, Message: %s";
+	private static final String hostParserVEMT =
+			"Validation error while parsing Host: \"%s\"\n" +
+					"Error index: %d, Message: %s";
 
 	/**
 	 * Implements the #concept-url-host-parser as in the URL Standard.
@@ -37,16 +37,16 @@ public class HostParser {
 	 * @param isSpecial
 	 * 		The isSpecial flag.
 	 * @param listener
-	 * 		The syntax violation listener of the parser.
+	 * 		The validation error listener of the parser.
 	 *
 	 * @return The parsed host.
 	 */
 	public static Host parseURLHost(
-			String input, boolean isSpecial, ISyntaxViolationListener listener) {
+			String input, boolean isSpecial, IValidationErrorListener listener) {
 		if (isSpecial)
 			return parseHost(input, listener);
 		if (CodePointHelper.containsForbiddenHostCodePoint(input)) {
-			listener.onSyntaxViolation(String.format(hostParserSVMT,
+			listener.onSyntaxViolation(String.format(hostParserVEMT,
 					input, -1, "Input string contains forbidden host code point."));
 			return null;
 		}
@@ -64,18 +64,18 @@ public class HostParser {
 	 * @param unicodeFlag
 	 * 		The unicodeFlag.
 	 * @param listener
-	 * 		The syntax violation listener of the parser
+	 * 		The validation error listener of the parser
 	 *
 	 * @return The parsed host.
 	 */
 	public static Host parseHost(
-			String input, boolean unicodeFlag, ISyntaxViolationListener listener) {
+			String input, boolean unicodeFlag, IValidationErrorListener listener) {
 		int[] codePoints = StringHelper.toCodePoints(input);
 		int length = codePoints.length;
 
 		if (codePoints[0] == '[') { // 1
 			if (codePoints[length - 1] != ']') {
-				listener.onSyntaxViolation(String.format(hostParserSVMT,
+				listener.onSyntaxViolation(String.format(hostParserVEMT,
 						input, -1, "Brackets unpaired."));
 				return null;
 			}
@@ -106,11 +106,11 @@ public class HostParser {
 	 * @param input
 	 * 		The input host string.
 	 * @param listener
-	 * 		The syntax violation listener of the parser.
+	 * 		The validation error listener of the parser.
 	 *
 	 * @return The parsed host.
 	 */
-	public static Host parseHost(String input, ISyntaxViolationListener listener) {
+	public static Host parseHost(String input, IValidationErrorListener listener) {
 		return parseHost(input, false, listener);
 	}
 
@@ -118,7 +118,7 @@ public class HostParser {
 	 * @see <a href="https://url.spec.whatwg.org/#concept-ipv6-parser">#concept-ipv6-parser</a>
 	 */
 	private static Ipv6Address parseIpv6(
-			String input, ISyntaxViolationListener listener) {
+			String input, IValidationErrorListener listener) {
 		// 1
 		char[] pieces = new char[8];
 		Arrays.fill(pieces, (char) 0);
@@ -297,7 +297,7 @@ public class HostParser {
 	/**
 	 * @see <a href="https://url.spec.whatwg.org/#concept-ipv4-parser">#concept-ipv4-parser</a>
 	 */
-	private static Host parseIpv4(String input, ISyntaxViolationListener listener) {
+	private static Host parseIpv4(String input, IValidationErrorListener listener) {
 		boolean syntaxViolationFlag = false; // 1
 		String[] parts = input.split(Pattern.quote("."), -1); // 2
 
@@ -407,9 +407,9 @@ public class HostParser {
 	}
 
 	private static void reportSyntaxViolation(
-			ISyntaxViolationListener listener,
+			IValidationErrorListener listener,
 			String input, int index, String msg) {
 		if (listener != null)
-			listener.onSyntaxViolation(String.format(hostParserSVMT, input, index, msg));
+			listener.onSyntaxViolation(String.format(hostParserVEMT, input, index, msg));
 	}
 }

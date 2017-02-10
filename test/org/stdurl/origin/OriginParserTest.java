@@ -3,7 +3,7 @@ package org.stdurl.origin;
 import org.junit.Test;
 import org.stdurl.URL;
 import org.stdurl.parser.BasicURLParser;
-import org.stdurl.parser.ISyntaxViolationListener;
+import org.stdurl.parser.IValidationErrorListener;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -50,7 +50,7 @@ public class OriginParserTest {
 	private static void test(String url, String origin) {
 		String msg = "Input: " + url;
 
-		URL parsedURL = BasicURLParser.parse(url, (ISyntaxViolationListener) null);
+		URL parsedURL = BasicURLParser.parse(url, (IValidationErrorListener) null);
 		assertNotEquals(msg, null, parsedURL);
 		assertFalse(msg, parsedURL.isFailure());
 

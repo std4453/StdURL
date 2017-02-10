@@ -91,7 +91,7 @@ public class TestShortenHelper {
 	}
 
 	public static MachineParameters p(String input, String baseStr) {
-		return p(input, BasicURLParser.parse(baseStr, (ISyntaxViolationListener) null));
+		return p(input, BasicURLParser.parse(baseStr, (IValidationErrorListener) null));
 	}
 
 	public static MachineParameters p(String input, Charset encoding, int stateOverride) {

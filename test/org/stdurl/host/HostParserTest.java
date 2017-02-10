@@ -1,8 +1,8 @@
 package org.stdurl.host;
 
 import org.junit.Test;
-import org.stdurl.RecordedSyntaxViolationListener;
-import org.stdurl.parser.ISyntaxViolationListener;
+import org.stdurl.RecordedValidationErrorListener;
+import org.stdurl.parser.IValidationErrorListener;
 
 import java.util.Random;
 
@@ -17,26 +17,26 @@ public class HostParserTest {
 	@Test
 	public void testParseIpv4() {
 		HostType ipv4 = HostType.IPV4;
-		RecordedSyntaxViolationListener listener = new RecordedSyntaxViolationListener();
+		RecordedValidationErrorListener listener = new RecordedValidationErrorListener();
 
 		// standard ipv4
 		test("192.168.202.134", ipv4, "192.168.202.134");
 		test("1.23.123.231", ipv4, "1.23.123.231");
 
-		// syntax violation - trailing point
+		// validation error - trailing point
 		test("13.25.46.209.", ipv4, "13.25.46.209", listener);
 		assertTrue(listener.occurred());
 
-		// syntax violation - part > 255 & return failure
+		// validation error - part > 255 & return failure
 		listener.clear();
 		test("256.255.255.255", ipv4, null, listener);
 		test("255.256.255.255", ipv4, null, listener);
 		test("255.255.256.255", ipv4, null, listener);
 		test("255.255.255.256", ipv4, null, listener);
-		// last part greater than 255 will result in one more syntax violation
+		// last part greater than 255 will result in one more validation error
 		assertEquals(5, listener.getOccurrences());
 
-		// syntax violation - last part > 255 & ignored
+		// validation error - last part > 255 & ignored
 		listener.clear();
 		int part1 = 192, part2 = 168, part3 = 202, part4 = 134;
 		String result = String.valueOf(part1) + '.' + part2 + '.' + part3 + '.' + part4;
@@ -48,7 +48,7 @@ public class HostParserTest {
 				ipv4, result, listener);
 		assertEquals(3, listener.getOccurrences());
 
-		// syntax violation - last part too big -> failure
+		// validation error - last part too big -> failure
 		listener.clear();
 		test("1.1.65536", ipv4, null, listener);
 		test("1.16777216", ipv4, null, listener);
@@ -96,7 +96,7 @@ public class HostParserTest {
 
 	@Test
 	public void testParseFailure() {
-		RecordedSyntaxViolationListener listener = new RecordedSyntaxViolationListener();
+		RecordedValidationErrorListener listener = new RecordedValidationErrorListener();
 
 		// unpaired brackets
 		test("[::", null, null, listener);
@@ -127,7 +127,7 @@ public class HostParserTest {
 	@Test
 	public void testParseIpv6() {
 		HostType ipv6 = HostType.IPV6;
-		RecordedSyntaxViolationListener listener = new RecordedSyntaxViolationListener();
+		RecordedValidationErrorListener listener = new RecordedValidationErrorListener();
 
 		// standard ipv6 addresses
 		test("[1234:5678:90ab:cdef:1234:5678:90AB:CDEF]", ipv6,
@@ -240,7 +240,7 @@ public class HostParserTest {
 
 	private static void test(
 			String host, HostType type, String result,
-			ISyntaxViolationListener listener) {
+			IValidationErrorListener listener) {
 		Host parsedHost = HostParser.parseHost(host, false, listener);
 		String msg = "Input = " + host;
 		if (result == null)
@@ -263,7 +263,7 @@ public class HostParserTest {
 		assertEquals(HostType.DOMAIN, parsed.getType());
 		assertEquals("www.example.com", parsed.serialize());
 
-		RecordedSyntaxViolationListener listener = new RecordedSyntaxViolationListener();
+		RecordedValidationErrorListener listener = new RecordedValidationErrorListener();
 
 		// forbidden host code points
 		assertEquals(HostParser.parseURLHost("\u0000host", false, listener), null);

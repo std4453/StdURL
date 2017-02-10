@@ -2,7 +2,7 @@ package org.stdurl;
 
 import org.junit.Test;
 import org.stdurl.parser.BasicURLParser;
-import org.stdurl.parser.ISyntaxViolationListener;
+import org.stdurl.parser.IValidationErrorListener;
 
 import static org.junit.Assert.assertEquals;
 
@@ -53,11 +53,11 @@ public class URLParserTest {
 
 	private URL parse(String url, String base) {
 		if (base == null) {
-			return BasicURLParser.parse(url, (ISyntaxViolationListener) null);
+			return BasicURLParser.parse(url, (IValidationErrorListener) null);
 		} else {
-			URL baseUrl = BasicURLParser.parse(base, (ISyntaxViolationListener) null);
+			URL baseUrl = BasicURLParser.parse(base, (IValidationErrorListener) null);
 			if (baseUrl == null || baseUrl.isFailure()) return URL.failure;
-			return BasicURLParser.parse(url, baseUrl, (ISyntaxViolationListener) null);
+			return BasicURLParser.parse(url, baseUrl, (IValidationErrorListener) null);
 		}
 	}
 }

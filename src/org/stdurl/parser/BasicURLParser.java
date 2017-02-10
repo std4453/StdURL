@@ -21,7 +21,7 @@ public class BasicURLParser {
 	 * @return The parsed {@link URL} object;
 	 */
 	public static URL parse(String input) {
-		return parse(input, SimpleSyntaxViolationListener.instance);
+		return parse(input, SimpleValidationErrorListener.instance);
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class BasicURLParser {
 	 *
 	 * @return The parsed {@link URL} object;
 	 */
-	public static URL parse(String input, ISyntaxViolationListener listener) {
+	public static URL parse(String input, IValidationErrorListener listener) {
 		return parse(input, null, listener);
 	}
 
@@ -50,7 +50,7 @@ public class BasicURLParser {
 	 */
 	public static URL parse(String input, URL url, int stateOverride) {
 		return parse(input, null, null, url,
-				stateOverride, SimpleSyntaxViolationListener.instance);
+				stateOverride, SimpleValidationErrorListener.instance);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class BasicURLParser {
 	 * @return The parsed {@link URL}.
 	 */
 	public static URL parse(String input, URL base) {
-		return parse(input, base, SimpleSyntaxViolationListener.instance);
+		return parse(input, base, SimpleValidationErrorListener.instance);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class BasicURLParser {
 	 *
 	 * @return The parsed {@link URL}.
 	 */
-	public static URL parse(String input, URL base, ISyntaxViolationListener listener) {
+	public static URL parse(String input, URL base, IValidationErrorListener listener) {
 		return parse(input, base, null, listener);
 	}
 
@@ -97,7 +97,7 @@ public class BasicURLParser {
 	 */
 	public static URL parse(String input, URL base, Charset encodingOverride) {
 		return parse(input, base, encodingOverride,
-				SimpleSyntaxViolationListener.instance);
+				SimpleValidationErrorListener.instance);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class BasicURLParser {
 	 */
 	public static URL parse(
 			String input, URL base, Charset encodingOverride,
-			ISyntaxViolationListener listener) {
+			IValidationErrorListener listener) {
 		return parse(input, base, encodingOverride, null,
 				ParserStates.NO_SUCH_STATE, listener);
 	}
@@ -150,7 +150,7 @@ public class BasicURLParser {
 	 */
 	public static URL parse(
 			String input, URL base, Charset encodingOverride,
-			URL url, int stateOverride, ISyntaxViolationListener listener) {
+			URL url, int stateOverride, IValidationErrorListener listener) {
 		int[] codePoints = StringHelper.toCodePoints(input);
 
 		if (url == null) { // 1

@@ -19,7 +19,7 @@ public class InjectedParserStateMachine extends ParserStateMachine {
 			MachineParameters params,
 			MachineURLParts parts,
 			MachineContext context,
-			ISyntaxViolationListener listener,
+			IValidationErrorListener listener,
 			ITerminateCondition condition) {
 		super(params.codePoints, params.base, params.encoding, params.stateOverride,
 				listener);

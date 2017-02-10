@@ -1,6 +1,6 @@
 package org.stdurl.parser;
 
-import org.stdurl.RecordedSyntaxViolationListener;
+import org.stdurl.RecordedValidationErrorListener;
 import org.stdurl.URL;
 
 import static org.junit.Assert.assertEquals;
@@ -64,7 +64,7 @@ public class ParserStateTestHelper {
 			ITerminateCondition condition,
 			MachineParameters params, MachineURLParts parts, MachineContext context,
 			boolean syntaxViolationExpected) {
-		RecordedSyntaxViolationListener listener = new RecordedSyntaxViolationListener();
+		RecordedValidationErrorListener listener = new RecordedValidationErrorListener();
 		InjectedParserStateMachine stateMachine = new InjectedParserStateMachine(
 				params, parts, context, listener, condition);
 		stateMachine.run();
