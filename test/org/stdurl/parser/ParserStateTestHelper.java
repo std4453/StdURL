@@ -46,6 +46,20 @@ public class ParserStateTestHelper {
 				.terminateRequested);
 	}
 
+	public static void testTerminatedAndCompare(
+			ITerminateCondition condition,
+			MachineParameters params,
+			boolean syntaxViolationExpected,
+			MachineURLParts startParts, MachineURLParts endParts,
+			MachineContext startContext, MachineContext endContext) {
+		InjectedParserStateMachine machine =
+				run(condition, params, startParts, startContext, syntaxViolationExpected);
+		assertNotEquals(URL.failure, machine.returnValue);
+		assertTrue(machine.terminateRequested);
+		check(endParts, machine.finalParts);
+		check(endContext, machine.finalContext);
+	}
+
 	private static InjectedParserStateMachine run(
 			ITerminateCondition condition,
 			MachineParameters params, MachineURLParts parts, MachineContext context,
