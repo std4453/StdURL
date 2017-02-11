@@ -73,7 +73,8 @@ public class TestShortenHelper {
 
 	// a stands for append
 	public static MachineURLParts a(MachineURLParts parts, String path) {
-		String[] segments = path.split(Pattern.quote("/"), -1);
+		String[] segments = new String[0];
+		if (path != null) segments = path.split(Pattern.quote("/"), -1);
 		List<String> newPath = new ArrayList<>(parts.path);
 		Collections.addAll(newPath, segments);
 		return u(parts.scheme, parts.username, parts.password, parts.host, parts.port,
