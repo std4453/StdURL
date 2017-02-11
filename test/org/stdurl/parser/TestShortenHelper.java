@@ -27,6 +27,27 @@ public class TestShortenHelper {
 				atFlag, bracketsFlag, passwordTokenSeenFlag);
 	}
 
+	// a stands for atFlag, sets the atFlag
+	public static MachineContext a(MachineContext context) {
+		return new MachineContext(context.state, context.pointer,
+				new StringBuffer(context.buffer),
+				true, context.bracketsFlag, context.passwordTokenSeenFlag);
+	}
+
+	// b stands for bracketsFlag, sets the bracketsFlag
+	public static MachineContext b(MachineContext context) {
+		return new MachineContext(context.state, context.pointer,
+				new StringBuffer(context.buffer),
+				context.atFlag, true, context.passwordTokenSeenFlag);
+	}
+
+	// p stands for passwordTokenSeenFlag, sets the passwordTokenSeenFlag
+	public static MachineContext p(MachineContext context) {
+		return new MachineContext(context.state, context.pointer,
+				new StringBuffer(context.buffer),
+				context.atFlag, context.bracketsFlag, true);
+	}
+
 	public static MachineContext c(int state, int pointer, StringBuffer buffer) {
 		return c(state, pointer, buffer, false, false, false);
 	}
@@ -79,6 +100,14 @@ public class TestShortenHelper {
 		Collections.addAll(newPath, segments);
 		return u(parts.scheme, parts.username, parts.password, parts.host, parts.port,
 				parts.cannotBeABaseURL, newPath, parts.query, parts.fragment);
+	}
+
+	// c stands for credentials
+	public static MachineURLParts c(
+			MachineURLParts parts, String username, String password) {
+		return u(parts.scheme, username, password, parts.host, parts.port,
+				parts.cannotBeABaseURL, new ArrayList<>(parts.path), parts.query,
+				parts.fragment);
 	}
 
 	// MACHINE PARAMETERS

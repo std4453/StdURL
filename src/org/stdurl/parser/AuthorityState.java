@@ -18,7 +18,7 @@ public class AuthorityState implements IParserState {
 		if (c == '@') {
 			machine.reportValidationError("'@' unexpected."); // 1.1
 			if (machine.atFlag) // 1.2
-				machine.buffer.append("%40");
+				machine.buffer.insert(0, "%40");
 			machine.setAtFlag(true); // 1.3
 
 			// 1.4
