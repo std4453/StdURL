@@ -11,11 +11,13 @@ public class RelativeSlashState implements IParserState {
 		int c = machine.c;
 
 		// 1
-		if (c == '/' || (SchemeHelper.isSpecialScheme(machine.scheme) && c == '\\')) {
+		if (SchemeHelper.isSpecialScheme(machine.scheme) && "\\/".indexOf(c) != -1) {
 			if (c == '\\')
 				machine.reportValidationError("Backslash should be slash.");
 			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
-		} else { // 2
+		} else if (c == '/') { // 2
+			machine.setState(ParserStates.AUTHORITY_STATE);
+		} else { // 3
 			machine.setUsername(machine.base.getUsernameInternal());
 			machine.setPassword(machine.base.getPasswordInternal());
 			machine.setHost(machine.base.getHostInternal());
