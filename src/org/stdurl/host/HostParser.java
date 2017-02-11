@@ -46,7 +46,7 @@ public class HostParser {
 		if (isSpecial)
 			return parseHost(input, listener);
 		if (CodePointHelper.containsForbiddenHostCodePoint(input)) {
-			listener.onSyntaxViolation(String.format(hostParserVEMT,
+			listener.onValidationError(String.format(hostParserVEMT,
 					input, -1, "Input string contains forbidden host code point."));
 			return null;
 		}
@@ -75,7 +75,7 @@ public class HostParser {
 
 		if (codePoints[0] == '[') { // 1
 			if (codePoints[length - 1] != ']') {
-				listener.onSyntaxViolation(String.format(hostParserVEMT,
+				listener.onValidationError(String.format(hostParserVEMT,
 						input, -1, "Brackets unpaired."));
 				return null;
 			}
@@ -90,7 +90,7 @@ public class HostParser {
 		if (asciiDomain == null) return null; // 4
 
 		if (CodePointHelper.containsForbiddenHostCodePoint(asciiDomain)) { // 5
-			reportSyntaxViolation(listener, input, -1,
+			reportValidationError(listener, input, -1,
 					"Input string contains forbidden host code point.");
 			return null;
 		}
@@ -133,7 +133,7 @@ public class HostParser {
 
 		if (codePoints[pointer] == ':') { // 5
 			if (getRemaining(codePoints, pointer, 0) != ':') {
-				reportSyntaxViolation(listener, input, pointer,
+				reportValidationError(listener, input, pointer,
 						"Ipv6 address should begin with \"::\".");
 				return null;
 			}
@@ -149,14 +149,14 @@ public class HostParser {
 			int c = codePoints[pointer];
 
 			if (piecePointer == 8) { // 6.1
-				reportSyntaxViolation(listener, input, pointer,
+				reportValidationError(listener, input, pointer,
 						"Ipv6 address has at most 8 pieces.");
 				return null;
 			}
 
 			if (c == ':') { // 6.2
 				if (compressPointer != -1) {
-					reportSyntaxViolation(listener, input, pointer,
+					reportValidationError(listener, input, pointer,
 							"Compress pointer not null.");
 					return null;
 				}
@@ -179,7 +179,7 @@ public class HostParser {
 			switch (c) { // 6.5
 				case '.':
 					if (l == 0) {
-						reportSyntaxViolation(listener, input, pointer,
+						reportValidationError(listener, input, pointer,
 								"Length can't be 0.");
 						return null;
 					}
@@ -189,7 +189,7 @@ public class HostParser {
 				case ':':
 					++pointer;
 					if (pointer == length) {
-						reportSyntaxViolation(listener, input, pointer - 1,
+						reportValidationError(listener, input, pointer - 1,
 								"':' can't be the last character.");
 						return null;
 					}
@@ -197,7 +197,7 @@ public class HostParser {
 				case 0:
 					break;
 				default:
-					reportSyntaxViolation(listener, input, pointer,
+					reportValidationError(listener, input, pointer,
 							new StringBuilder("Character '")
 									.appendCodePoint(c)
 									.append("' unexpected.")
@@ -218,7 +218,7 @@ public class HostParser {
 
 		if (!jumpToFinale) {
 			if (piecePointer > 6) // 8
-				reportSyntaxViolation(listener, input, pointer, "Unknown error.");
+				reportValidationError(listener, input, pointer, "Unknown error.");
 
 			int numbersSeen = 0; // 9
 			while (pointer != length) { // 10
@@ -231,14 +231,14 @@ public class HostParser {
 						++pointer;
 						c = pointer == length ? 0 : codePoints[pointer];
 					} else {
-						reportSyntaxViolation(listener, input, pointer,
+						reportValidationError(listener, input, pointer,
 								"numbersSeen greater than 4.");
 						return null;
 					}
 				}
 
 				if (!ASCIIHelper.isASCIIDigit(c)) { // 10.3
-					reportSyntaxViolation(listener, input, pointer,
+					reportValidationError(listener, input, pointer,
 							"ASCII digit expected.");
 					return null;
 				}
@@ -248,7 +248,7 @@ public class HostParser {
 					int number = RadixHelper.fromHexChar(c);
 					if (value == -1) value = number;
 					else if (value == 0) {
-						reportSyntaxViolation(listener, input, pointer,
+						reportValidationError(listener, input, pointer,
 								"First digit should not be 0.");
 						return null;
 					} else value = value * 10 + number;
@@ -257,7 +257,7 @@ public class HostParser {
 					c = pointer == length ? 0 : codePoints[pointer];
 
 					if (value > 255) {
-						reportSyntaxViolation(listener, input, pointer,
+						reportValidationError(listener, input, pointer,
 								"Value " + value + " too big.");
 						return null;
 					}
@@ -269,7 +269,7 @@ public class HostParser {
 				if (numbersSeen == 2 || numbersSeen == 4) ++piecePointer; // 10.7
 
 				if (pointer == length && numbersSeen != 4) { // 10.8
-					reportSyntaxViolation(listener, input, pointer, "Pieces not enough.");
+					reportValidationError(listener, input, pointer, "Pieces not enough.");
 					return null;
 				}
 			}
@@ -287,7 +287,7 @@ public class HostParser {
 			}
 		} else // 12
 			if (piecePointer != 8) {
-				reportSyntaxViolation(listener, input, pointer, "Pieces not enough.");
+				reportValidationError(listener, input, pointer, "Pieces not enough.");
 				return null;
 			}
 
@@ -298,13 +298,13 @@ public class HostParser {
 	 * @see <a href="https://url.spec.whatwg.org/#concept-ipv4-parser">#concept-ipv4-parser</a>
 	 */
 	private static Host parseIpv4(String input, IValidationErrorListener listener) {
-		boolean syntaxViolationFlag = false; // 1
+		boolean validationErrorFlag = false; // 1
 		String[] parts = input.split(Pattern.quote("."), -1); // 2
 
 		// 3
 		int partsLength = parts.length;
 		if (parts[partsLength - 1].isEmpty()) {
-			syntaxViolationFlag = true;
+			validationErrorFlag = true;
 			if (partsLength > 1) --partsLength;
 		}
 
@@ -318,30 +318,30 @@ public class HostParser {
 		for (int i = 0; i < partsLength; ++i) { // 6
 			String part = parts[i];
 			if (part.isEmpty()) return new OpaqueHost(input);
-			Object[] ret = parseIpv4Number(part, syntaxViolationFlag);
+			Object[] ret = parseIpv4Number(part, validationErrorFlag);
 			if (ret[0] == null) return new OpaqueHost(input);
 			int n = (Integer) ret[0];
-			syntaxViolationFlag |= (Boolean) ret[1];
+			validationErrorFlag |= (Boolean) ret[1];
 
 			numbers.add(n);
 		}
 
-		if (syntaxViolationFlag) // 7
-			reportSyntaxViolation(listener, input, -1, "Error parsing ipv4 number.");
+		if (validationErrorFlag) // 7
+			reportValidationError(listener, input, -1, "Error parsing ipv4 number.");
 
 		// 8 + 9
 		int numbersSize = numbers.size();
 		for (int i = 0; i < numbersSize; ++i) {
 			int number = numbers.get(i);
 			if (number < 0 || number > 255) { // number should be positive
-				reportSyntaxViolation(listener, input, -1,
+				reportValidationError(listener, input, -1,
 						"Ipv4 number greater than 255.");
 				if (i != numbersSize - 1) return null;
 			}
 		}
 
 		if (numbers.get(numbersSize - 1) >= (1L << ((5 - numbersSize) << 3))) { // 10
-			reportSyntaxViolation(listener, input, -1,
+			reportValidationError(listener, input, -1,
 					"Last part of ipv4 address too big.");
 			return null;
 		}
@@ -363,7 +363,7 @@ public class HostParser {
 	 * @see <a href="https://url.spec.whatwg.org/#ipv4-number-parser">#ipv4-number-parser</a>
 	 */
 	private static Object[] parseIpv4Number(
-			String input, boolean syntaxViolationFlag) {
+			String input, boolean validationErrorFlag) {
 		int R = 10; // 1
 
 		int[] codePoints = StringHelper.toCodePoints(input);
@@ -371,14 +371,14 @@ public class HostParser {
 
 		// 2
 		if (length >= 2 && codePoints[0] == '0' && "xX".indexOf(codePoints[1]) != -1) {
-			syntaxViolationFlag = true;
+			validationErrorFlag = true;
 			int[] newCodePoints = new int[length - 2];
 			System.arraycopy(codePoints, 2, newCodePoints, 0, length - 2);
 			codePoints = newCodePoints;
 			length -= 2;
 			R = 16;
 		} else if (length >= 2 && codePoints[0] == '0') { // 3
-			syntaxViolationFlag = true;
+			validationErrorFlag = true;
 			int[] newCodePoints = new int[length - 1];
 			System.arraycopy(codePoints, 1, newCodePoints, 0, length - 1);
 			codePoints = newCodePoints;
@@ -386,17 +386,17 @@ public class HostParser {
 			R = 8;
 		}
 
-		if (length == 0) return new Object[]{0, syntaxViolationFlag};
+		if (length == 0) return new Object[]{0, validationErrorFlag};
 		for (int codePoint : codePoints)
 			if (!RadixHelper.isRadixNDigit(codePoint, R)) // leading +/- is forbidden
-				return new Object[]{null, syntaxViolationFlag};
+				return new Object[]{null, validationErrorFlag};
 
 		input = StringHelper.toString(codePoints);
 		try {
 			int n = Integer.parseUnsignedInt(input, R);
-			return new Object[]{n, syntaxViolationFlag};
+			return new Object[]{n, validationErrorFlag};
 		} catch (NumberFormatException e) {
-			return new Object[]{null, syntaxViolationFlag};
+			return new Object[]{null, validationErrorFlag};
 		}
 	}
 
@@ -406,10 +406,10 @@ public class HostParser {
 		return codePoints[index];
 	}
 
-	private static void reportSyntaxViolation(
+	private static void reportValidationError(
 			IValidationErrorListener listener,
 			String input, int index, String msg) {
 		if (listener != null)
-			listener.onSyntaxViolation(String.format(hostParserVEMT, input, index, msg));
+			listener.onValidationError(String.format(hostParserVEMT, input, index, msg));
 	}
 }

@@ -21,11 +21,11 @@ public class CannotBeABaseURLPathState implements IParserState {
 			machine.setState(ParserStates.FRAGMENT_STATE);
 		} else { // 3
 			if (c != 0 && !CodePointHelper.isURLCodePoint(c) && c != '%')
-				machine.reportSyntaxViolation(new StringBuilder("Character '")
+				machine.reportValidationError(new StringBuilder("Character '")
 						.appendCodePoint(c).append("' unexpected.").toString());
 			if (c == '%' && (!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(0)) ||
 					!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(1))))
-				machine.reportSyntaxViolation("'%' is not followed by two hex digits.");
+				machine.reportValidationError("'%' is not followed by two hex digits.");
 
 			if (c != 0) {
 				String encoded = PercentEncoder.utf8Encode(c, SimpleEncodeSet.instance);

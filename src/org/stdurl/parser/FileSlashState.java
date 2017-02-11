@@ -14,7 +14,7 @@ public class FileSlashState implements IParserState {
 
 		if ("\\/".indexOf(c) != -1) { // 1
 			if (c == '\\')
-				machine.reportSyntaxViolation("Backslash should be slash.");
+				machine.reportValidationError("Backslash should be slash.");
 			machine.setState(ParserStates.FILE_HOST_STATE);
 		} else { // 2
 			URL base = machine.base;

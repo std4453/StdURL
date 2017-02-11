@@ -18,7 +18,7 @@ public class PathState implements IParserState {
 				(!ParserStates.hasState(machine.stateOverride)
 						&& "?#".indexOf(c) != -1)) {
 			if (flag1) // 1.1
-				machine.reportSyntaxViolation("Backslash should be slash.");
+				machine.reportValidationError("Backslash should be slash.");
 
 			String buf = machine.buffer.toString();
 
@@ -33,7 +33,7 @@ public class PathState implements IParserState {
 				if (SchemeHelper.SCHEME_FILE.equalsIgnoreCase(machine.scheme) &&
 						machine.path.isEmpty() &&
 						FileSchemeHelper.isWindowsDriveLetter(buf)) { // 1.4.1
-					if (machine.host != null) machine.reportSyntaxViolation(
+					if (machine.host != null) machine.reportValidationError(
 							"Local file shouldn't have a host");
 					machine.setHost(null);
 					machine.buffer.setCharAt(
@@ -53,12 +53,12 @@ public class PathState implements IParserState {
 			}
 		} else { // 2
 			if (!CodePointHelper.isURLCodePoint(c) && c != '%')
-				machine.reportSyntaxViolation(new StringBuilder("Character '")
+				machine.reportValidationError(new StringBuilder("Character '")
 						.appendCodePoint(c).append("' unexpected.").toString());
 			if (c == '%' && (
 					!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(0)) ||
 							!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(1))))
-				machine.reportSyntaxViolation("'%' is not followed by two hex digits.");
+				machine.reportValidationError("'%' is not followed by two hex digits.");
 
 			String encoded = PercentEncoder.utf8Encode(c, DefaultEncodeSet.instance);
 			machine.buffer.append(encoded);

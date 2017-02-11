@@ -17,11 +17,11 @@ public class FragmentState implements IParserState {
 		// U+0000 is omitted, because we represent EOF by 0x0000, therefore they coincide.
 		if (c != 0) {
 			if (!CodePointHelper.isURLCodePoint(c) && c != '%')
-				machine.reportSyntaxViolation(new StringBuffer("Character '")
+				machine.reportValidationError(new StringBuffer("Character '")
 						.appendCodePoint(c).append("' unexpected.").toString());
 			if (c == '%' && (!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(0)) ||
 					!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(1))))
-				machine.reportSyntaxViolation("'%' is not followed by two hex digits.");
+				machine.reportValidationError("'%' is not followed by two hex digits.");
 
 			String encoded = PercentEncoder.utf8Encode(c, SimpleEncodeSet.instance);
 			machine.setFragment(machine.fragment + encoded);

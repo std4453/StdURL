@@ -18,7 +18,7 @@ public class FileHostState implements IParserState {
 			machine.setPointer(machine.pointer - 1);
 
 			if (FileSchemeHelper.isWindowsDriveLetter(machine.buffer.toString())) { // 1.1
-				machine.reportSyntaxViolation("File host shouldn't be windows drive.");
+				machine.reportValidationError("File host shouldn't be windows drive.");
 				machine.setState(ParserStates.PATH_STATE);
 			} else if (machine.buffer.length() == 0) { // 1.2
 				machine.setState(ParserStates.PATH_START_STATE);

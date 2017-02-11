@@ -16,7 +16,7 @@ public class AuthorityState implements IParserState {
 
 		// 1
 		if (c == '@') {
-			machine.reportSyntaxViolation("'@' unexpected."); // 1.1
+			machine.reportValidationError("'@' unexpected."); // 1.1
 			if (machine.atFlag) // 1.2
 				machine.buffer.append("%40");
 			machine.setAtFlag(true); // 1.3
@@ -40,7 +40,7 @@ public class AuthorityState implements IParserState {
 			if (c == 0 || "/?#".indexOf(c) != -1 ||
 					(c == '\\' && SchemeHelper.isSpecialScheme(machine.scheme)))
 				if (machine.atFlag && machine.buffer.length() == 0) {
-					machine.reportSyntaxViolation("Empty host forbidden.");
+					machine.reportValidationError("Empty host forbidden.");
 					machine.returnDirectly(URL.failure);
 				} else {
 					machine.setPointer(machine.pointer - 1

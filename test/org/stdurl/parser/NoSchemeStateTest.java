@@ -1,6 +1,7 @@
 package org.stdurl.parser;
 
 import org.junit.Test;
+import org.stdurl.host.Host;
 
 import static org.stdurl.parser.ParserStateTestHelper.testCompare;
 import static org.stdurl.parser.ParserStateTestHelper.testFailure;
@@ -25,7 +26,7 @@ public class NoSchemeStateTest {
 
 		// 2. otherwise if base cannot be a base URL & c == #
 		testCompare(cond, p("#query", "test:example-path?query#frag"), false, parts,
-				a(u("test", "", "", null, -1, true, null, "query", ""),
+				a(u("test", "", "", (Host) null, -1, true, null, "query", ""),
 						"example-path"), context, c(ParserStates.FRAGMENT_STATE, 0));
 
 		// 3. otherwise if base.scheme != "file"

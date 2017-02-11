@@ -42,11 +42,11 @@ public class QueryState implements IParserState {
 			}
 		} else { // 2
 			if (!CodePointHelper.isURLCodePoint(c) && c != '%')
-				machine.reportSyntaxViolation(new StringBuffer("Character '")
+				machine.reportValidationError(new StringBuffer("Character '")
 						.appendCodePoint(c).append("' unexpected.").toString());
 			if (c == '%' && (!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(0)) ||
 					!ASCIIHelper.isASCIIHexDigit(machine.getRemainingAt(1))))
-				machine.reportSyntaxViolation("'%' is not followed by two hex digits.");
+				machine.reportValidationError("'%' is not followed by two hex digits.");
 
 			machine.buffer.appendCodePoint(c);
 		}

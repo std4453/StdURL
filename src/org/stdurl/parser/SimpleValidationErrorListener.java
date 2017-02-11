@@ -9,7 +9,7 @@ public class SimpleValidationErrorListener implements IValidationErrorListener {
 			new SimpleValidationErrorListener();
 
 	@Override
-	public void onSyntaxViolation(String message) {
+	public void onValidationError(String message) {
 		System.err.println(message);
 	}
 }

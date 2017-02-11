@@ -18,7 +18,7 @@ public class SchemeStartState implements IParserState {
 			machine.setState(ParserStates.NO_SCHEME_STATE);
 			machine.setPointer(machine.pointer - 1);
 		} else {
-			machine.reportSyntaxViolation("State override does nothing.");
+			machine.reportValidationError("State override does nothing.");
 			machine.returnDirectly(URL.failure);
 		}
 	}

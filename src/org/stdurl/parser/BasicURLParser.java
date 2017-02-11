@@ -159,7 +159,7 @@ public class BasicURLParser {
 			// 1.2 + 1.3
 			int[] trimmedCodePoints = trimC0ControlOrSpace(codePoints);
 			if (trimmedCodePoints != codePoints)
-				ParserStateMachine.reportSyntaxViolation(listener, input,
+				ParserStateMachine.reportValidationError(listener, input,
 						ParserStates.NO_SUCH_STATE, -1,
 						"Leading or Trailing C0 control or space found.");
 			codePoints = trimmedCodePoints;
@@ -168,7 +168,7 @@ public class BasicURLParser {
 		// 2 + 3
 		int[] removedCodePoints = removeTabOrNewLine(codePoints);
 		if (removedCodePoints != codePoints)
-			ParserStateMachine.reportSyntaxViolation(listener, input,
+			ParserStateMachine.reportValidationError(listener, input,
 					ParserStates.NO_SUCH_STATE, -1,
 					"U+0009, U+000A or U+000D unexpected.");
 		codePoints = removedCodePoints;

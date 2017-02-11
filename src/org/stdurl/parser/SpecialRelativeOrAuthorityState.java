@@ -11,7 +11,7 @@ public class SpecialRelativeOrAuthorityState implements IParserState {
 			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
 			machine.setPointer(machine.pointer + 1);
 		} else {
-			machine.reportSyntaxViolation("Should start with \"//\".");
+			machine.reportValidationError("Should start with \"//\".");
 			machine.setState(ParserStates.RELATIVE_STATE);
 			machine.setPointer(machine.pointer - 1);
 		}

@@ -14,11 +14,11 @@ import static org.junit.Assert.assertTrue;
 public class ParserStateTestHelper {
 	public static void testCompare(
 			ITerminateCondition condition,
-			MachineParameters params, boolean syntaxViolationExpected,
+			MachineParameters params, boolean validationErrorExpected,
 			MachineURLParts startParts, MachineURLParts endParts,
 			MachineContext startContext, MachineContext endContext) {
 		InjectedParserStateMachine machine =
-				run(condition, params, startParts, startContext, syntaxViolationExpected);
+				run(condition, params, startParts, startContext, validationErrorExpected);
 		assertNotEquals(URL.failure, machine.returnValue);
 		assertFalse(machine.terminateRequested);
 		check(endParts, machine.finalParts);
@@ -30,9 +30,9 @@ public class ParserStateTestHelper {
 			MachineParameters params,
 			MachineURLParts parts,
 			MachineContext context,
-			boolean syntaxViolationExpected) {
+			boolean validationErrorExpected) {
 		assertEquals(URL.failure,
-				run(condition, params, parts, context, syntaxViolationExpected)
+				run(condition, params, parts, context, validationErrorExpected)
 						.returnValue);
 	}
 
@@ -41,19 +41,19 @@ public class ParserStateTestHelper {
 			MachineParameters params,
 			MachineURLParts parts,
 			MachineContext context,
-			boolean syntaxViolationExpected) {
-		assertTrue(run(condition, params, parts, context, syntaxViolationExpected)
+			boolean validationErrorExpected) {
+		assertTrue(run(condition, params, parts, context, validationErrorExpected)
 				.terminateRequested);
 	}
 
 	public static void testTerminatedAndCompare(
 			ITerminateCondition condition,
 			MachineParameters params,
-			boolean syntaxViolationExpected,
+			boolean validationErrorExpected,
 			MachineURLParts startParts, MachineURLParts endParts,
 			MachineContext startContext, MachineContext endContext) {
 		InjectedParserStateMachine machine =
-				run(condition, params, startParts, startContext, syntaxViolationExpected);
+				run(condition, params, startParts, startContext, validationErrorExpected);
 		assertNotEquals(URL.failure, machine.returnValue);
 		assertTrue(machine.terminateRequested);
 		check(endParts, machine.finalParts);
@@ -63,12 +63,12 @@ public class ParserStateTestHelper {
 	private static InjectedParserStateMachine run(
 			ITerminateCondition condition,
 			MachineParameters params, MachineURLParts parts, MachineContext context,
-			boolean syntaxViolationExpected) {
+			boolean validationErrorExpected) {
 		RecordedValidationErrorListener listener = new RecordedValidationErrorListener();
 		InjectedParserStateMachine stateMachine = new InjectedParserStateMachine(
 				params, parts, context, listener, condition);
 		stateMachine.run();
-		assertEquals(syntaxViolationExpected, listener.occurred());
+		assertEquals(validationErrorExpected, listener.occurred());
 		return stateMachine;
 	}
 
@@ -78,10 +78,7 @@ public class ParserStateTestHelper {
 		assertEquals(expected.scheme, actual.scheme);
 		assertEquals(expected.username, actual.username);
 		assertEquals(expected.password, actual.password);
-		if (expected.host != actual.host) {
-			assertFalse(expected.host == null || actual.host == null);
-			assertEquals(expected.host.toString(), actual.host.toString());
-		}
+		assertEquals(expected.host, actual.host);
 		assertEquals(expected.port, actual.port);
 		assertEquals(expected.cannotBeABaseURL, actual.cannotBeABaseURL);
 		int expectedPathSize = expected.path.size();

@@ -4,6 +4,7 @@ import org.stdurl.URL;
 import org.stdurl.helpers.EncodingHelper;
 import org.stdurl.helpers.StringHelper;
 import org.stdurl.host.Host;
+import org.stdurl.host.HostParser;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -48,8 +49,17 @@ public class TestShortenHelper {
 				cannotBeABaseURL, path, query, fragment);
 	}
 
+	public static MachineURLParts u(
+			String scheme, String username, String password, String hostStr, int port,
+			boolean cannotBeABaseURL, String path, String query, String fragment) {
+		Host host = HostParser.parseHost(hostStr, null);
+		return a(u(scheme, username, password, host, port, cannotBeABaseURL,
+				null, query, fragment), path);
+	}
+
 	public static MachineURLParts u(String scheme, boolean cannotBeABaseURL) {
-		return u(scheme, "", "", null, -1, cannotBeABaseURL, null, null, null);
+		return u(scheme, "", "", (Host) null, -1, cannotBeABaseURL, null, null,
+				null);
 	}
 
 	public static MachineURLParts u(String scheme) {

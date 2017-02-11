@@ -10,7 +10,7 @@ public class RecordedValidationErrorListener implements IValidationErrorListener
 	private int occurrences = 0;
 
 	@Override
-	public void onSyntaxViolation(String message) {
+	public void onValidationError(String message) {
 		++this.occurrences;
 	}
 

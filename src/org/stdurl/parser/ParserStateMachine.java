@@ -338,18 +338,18 @@ public class ParserStateMachine {
 			"Validation Error while parsing URL: \"%s\"\n" +
 					"Current state: %d, Error index: %d\nMessage: %s";
 
-	public void reportSyntaxViolation(String msg) {
-		reportSyntaxViolation(this.listener, this.input, this.state, this.pointer, msg);
+	public void reportValidationError(String msg) {
+		reportValidationError(this.listener, this.input, this.state, this.pointer, msg);
 	}
 
-	public static void reportSyntaxViolation(
+	public static void reportValidationError(
 			IValidationErrorListener listener,
 			String input,
 			int state,
 			int pointer,
 			String msg) {
 		if (listener != null)
-			listener.onSyntaxViolation(String.format(basicURLParserVEMT,
+			listener.onValidationError(String.format(basicURLParserVEMT,
 					input, state, pointer, msg));
 	}
 }

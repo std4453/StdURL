@@ -26,7 +26,7 @@ public class FileState implements IParserState {
 			case '/':
 			case '\\':
 				if (machine.c == '\\')
-					machine.reportSyntaxViolation("Backslash should be slash.");
+					machine.reportValidationError("Backslash should be slash.");
 				machine.setState(ParserStates.FILE_SLASH_STATE);
 				break;
 			case '?':
@@ -69,7 +69,7 @@ public class FileState implements IParserState {
 					// shorten url's path, hardcoded
 					PathHelper.shortenPath(machine.path, machine.scheme);
 				} else if (flag) // 2
-					machine.reportSyntaxViolation("Unexpected file path.");
+					machine.reportValidationError("Unexpected file path.");
 
 				// 3
 				machine.setPointer(machine.pointer - 1);

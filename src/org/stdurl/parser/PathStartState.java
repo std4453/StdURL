@@ -12,7 +12,7 @@ public class PathStartState implements IParserState {
 
 		// 1
 		boolean flag = SchemeHelper.isSpecialScheme(machine.scheme) && c == '\\';
-		if (flag) machine.reportSyntaxViolation("Backslash should be slash.");
+		if (flag) machine.reportValidationError("Backslash should be slash.");
 
 		// 2
 		machine.setState(ParserStates.PATH_STATE);

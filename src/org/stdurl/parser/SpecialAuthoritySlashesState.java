@@ -10,7 +10,7 @@ public class SpecialAuthoritySlashesState implements IParserState {
 			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
 			machine.setPointer(machine.pointer + 1);
 		} else {
-			machine.reportSyntaxViolation("Slash should be followed by another slash.");
+			machine.reportValidationError("Slash should be followed by another slash.");
 			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
 			machine.setPointer(machine.pointer - 1);
 		}

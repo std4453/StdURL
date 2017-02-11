@@ -43,7 +43,7 @@ public class RelativeState implements IParserState {
 				break;
 			default:
 				if (SchemeHelper.isSpecialScheme(machine.scheme) && machine.c == '\\') {
-					machine.reportSyntaxViolation("Backslash should be slash.");
+					machine.reportValidationError("Backslash should be slash.");
 					machine.setState(ParserStates.RELATIVE_SLASH_STATE);
 				} else {
 					machine.setUsername(machine.base.getUsernameInternal());

@@ -1,5 +1,7 @@
 package org.stdurl.host;
 
+import java.util.Objects;
+
 /**
  * Instance of {@link Host} represents a host defined in the URL Standard. The
  * {@link Host} class is the superclass to those more specific types of host, and the
@@ -77,5 +79,11 @@ public abstract class Host {
 	@Override
 	public String toString() {
 		return this.getType().name + ": " + this.serialize();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof Host
+				&& Objects.equals(this.toString(), obj.toString());
 	}
 }

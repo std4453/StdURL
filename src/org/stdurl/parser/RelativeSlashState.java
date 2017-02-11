@@ -13,7 +13,7 @@ public class RelativeSlashState implements IParserState {
 		// 1
 		if (c == '/' || (SchemeHelper.isSpecialScheme(machine.scheme) && c == '\\')) {
 			if (c == '\\')
-				machine.reportSyntaxViolation("Backslash should be slash.");
+				machine.reportValidationError("Backslash should be slash.");
 			machine.setState(ParserStates.SPECIAL_AUTHORITY_IGNORE_SLASHES_STATE);
 		} else { // 2
 			machine.setUsername(machine.base.getUsernameInternal());

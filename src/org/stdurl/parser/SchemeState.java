@@ -38,7 +38,7 @@ public class SchemeState implements IParserState {
 			if ("file".equalsIgnoreCase(machine.scheme)) { // 2.5
 				if (machine.getRemainingAt(0) != '/' ||
 						machine.getRemainingAt(1) != '/')
-					machine.reportSyntaxViolation(
+					machine.reportValidationError(
 							"Path of file scheme doesn't start with \"//\".");
 				machine.setState(ParserStates.FILE_STATE);
 			} else if (SchemeHelper.isSpecialScheme(machine.scheme)) {
@@ -60,7 +60,7 @@ public class SchemeState implements IParserState {
 			machine.setState(ParserStates.NO_SCHEME_STATE);
 			machine.setPointer(-1);
 		} else { //4
-			machine.reportSyntaxViolation("State override does nothing.");
+			machine.reportValidationError("State override does nothing.");
 			machine.returnDirectly(URL.failure);
 		}
 	}

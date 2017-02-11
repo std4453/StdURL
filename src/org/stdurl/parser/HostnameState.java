@@ -15,7 +15,7 @@ public class HostnameState implements IParserState {
 
 		if (c == ':' && !machine.bracketsFlag) { //1
 			if (machine.buffer.length() == 0) { // 1.1
-				machine.reportSyntaxViolation("Empty host forbidden.");
+				machine.reportValidationError("Empty host forbidden.");
 				machine.returnDirectly(URL.failure);
 				return;
 			}
@@ -44,7 +44,7 @@ public class HostnameState implements IParserState {
 			boolean isSpecial = SchemeHelper.isSpecialScheme(machine.scheme);
 
 			if (isSpecial && machine.buffer.length() == 0) { // 2.1
-				machine.reportSyntaxViolation("Empty host forbidden.");
+				machine.reportValidationError("Empty host forbidden.");
 				machine.returnDirectly(URL.failure);
 				return;
 			}
