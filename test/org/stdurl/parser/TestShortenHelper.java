@@ -56,6 +56,10 @@ public class TestShortenHelper {
 		return c(state, pointer, new StringBuffer(bufferStr));
 	}
 
+	public static MachineContext c(MachineContext context, String bufferStr) {
+		return c(context.state, context.pointer, bufferStr);
+	}
+
 	public static MachineContext c(int state, int pointer) {
 		return c(state, pointer, (StringBuffer) null);
 	}
@@ -76,6 +80,13 @@ public class TestShortenHelper {
 		Host host = HostParser.parseHost(hostStr, null);
 		return a(u(scheme, username, password, host, port, cannotBeABaseURL,
 				null, query, fragment), path);
+	}
+
+	public static MachineURLParts u(MachineURLParts parts, String hostStr, int port) {
+		Host host = HostParser.parseHost(hostStr, null);
+		return u(parts.scheme, parts.username, parts.password, host, port,
+				parts.cannotBeABaseURL, new ArrayList<>(parts.path), parts.query,
+				parts.fragment);
 	}
 
 	public static MachineURLParts u(String scheme, boolean cannotBeABaseURL) {
