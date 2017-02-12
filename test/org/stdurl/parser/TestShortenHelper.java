@@ -83,7 +83,8 @@ public class TestShortenHelper {
 	}
 
 	public static MachineURLParts u(MachineURLParts parts, String hostStr, int port) {
-		Host host = HostParser.parseHost(hostStr, null);
+		Host host = null;
+		if (hostStr != null) host = HostParser.parseHost(hostStr, null);
 		return u(parts.scheme, parts.username, parts.password, host, port,
 				parts.cannotBeABaseURL, new ArrayList<>(parts.path), parts.query,
 				parts.fragment);

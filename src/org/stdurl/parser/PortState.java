@@ -20,7 +20,7 @@ public class PortState implements IParserState {
 			if (machine.buffer.length() != 0) { // 2.1
 				int port = Integer.parseInt(machine.buffer.toString()); // 2.1.1
 				if (port > 0xFFFF) { // 2.1.2
-					machine.reportValidationError("Port should be smaller than 32768.");
+					machine.reportValidationError("Port should be smaller than 65536.");
 					machine.returnDirectly(URL.failure);
 					return;
 				}
