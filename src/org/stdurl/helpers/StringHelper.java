@@ -28,20 +28,6 @@ public class StringHelper {
 	}
 
 	/**
-	 * Converts one given code point to {@link String}.
-	 *
-	 * @param codePoint
-	 * 		The code point to convert.
-	 *
-	 * @return The converted {@link String}.
-	 */
-	public static String toString(int codePoint) {
-		StringBuilder sb = new StringBuilder();
-		sb.appendCodePoint(codePoint);
-		return sb.toString();
-	}
-
-	/**
 	 * Converts a given sequence of code points to {@link String}.
 	 *
 	 * @param codePoints
