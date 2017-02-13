@@ -122,6 +122,13 @@ public class TestShortenHelper {
 				parts.fragment);
 	}
 
+	// a stands for additional
+	public static MachineURLParts a(
+			MachineURLParts parts, String query, String fragment) {
+		return u(parts.scheme, parts.username, parts.password, parts.host, parts.port,
+				parts.cannotBeABaseURL, new ArrayList<>(parts.path), query, fragment);
+	}
+
 	// MACHINE PARAMETERS
 
 	public static MachineParameters p(

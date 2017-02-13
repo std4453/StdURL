@@ -2,9 +2,9 @@ package org.stdurl.parser;
 
 import org.junit.Test;
 import org.stdurl.helpers.StringHelper;
-import org.stdurl.host.Host;
 
 import static org.stdurl.parser.ParserStateTestHelper.testCompare;
+import static org.stdurl.parser.TestShortenHelper.a;
 import static org.stdurl.parser.TestShortenHelper.c;
 import static org.stdurl.parser.TestShortenHelper.p;
 import static org.stdurl.parser.TestShortenHelper.u;
@@ -32,10 +32,10 @@ public class PathStartStateTest {
 		}
 
 		testCompare(cond, p("?"), false, parts1,
-				u("test", "", "", (Host) null, -1, false, null, "", null),
+				a(u("test"), "", null),
 				context, c(ParserStates.QUERY_STATE, 0));
 		testCompare(cond, p("#"), false, parts1,
-				u("test", "", "", (Host) null, -1, false, null, null, ""),
+				a(u("test"), null, ""),
 				context, c(ParserStates.FRAGMENT_STATE, 0));
 		testCompare(cond, p(""), false, parts1, parts1, context, context);
 		testCompare(cond, p("/"), false, parts1, parts1, context,
