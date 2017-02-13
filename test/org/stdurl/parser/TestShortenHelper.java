@@ -164,4 +164,9 @@ public class TestShortenHelper {
 	public static MachineParameters p(String input) {
 		return p(input, ParserStates.NO_SUCH_STATE);
 	}
+
+	// c stands for charset
+	public static MachineParameters c(MachineParameters params, Charset encoding) {
+		return p(params.codePoints, params.base, encoding, params.stateOverride);
+	}
 }
