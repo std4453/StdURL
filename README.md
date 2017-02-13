@@ -43,8 +43,7 @@ gradle check
 
 ## Release History
 
-* 0.0.1
-    Not released yet.
+* 1.0 (Feb. 13, 2016): First stable release.
 
 ## Others
 

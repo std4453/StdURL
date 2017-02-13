@@ -15,18 +15,6 @@ sourceSets {
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId 'com.std4453'
-            artifactId 'stdurl'
-            version '0.1-nightly'
-
-            from components.java
-        }
-    }
-}
-
 repositories {
     mavenLocal()
     jcenter()
@@ -35,4 +23,16 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId 'com.std4453'
+            artifactId 'stdurl'
+            version '1.0'
+        }
+    }
 }
