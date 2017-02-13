@@ -70,6 +70,7 @@ public class HostParser {
 	 */
 	public static Host parseHost(
 			String input, boolean unicodeFlag, IValidationErrorListener listener) {
+		if (input == null || input.isEmpty()) return new OpaqueHost("");
 		int[] codePoints = StringHelper.toCodePoints(input);
 		int length = codePoints.length;
 
